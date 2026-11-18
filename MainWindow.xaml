@@ -5,54 +5,61 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TexasHoldem"
         mc:Ignorable="d"
-        Title="Texas Hold'em" Height="980" Width="800"
+        Title="Texas Hold'em" Height="680" Width="860"
         Background="#146C36">
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="Texas Hold'em"
-                       FontSize="40"
+                       FontSize="32"
                        Foreground="White"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,20"/>
+                       Margin="0,0,0,12"/>
             <TextBlock x:Name="ChipText"
-                       FontSize="20"
+                       FontSize="18"
                        Foreground="White"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,10"/>
+                       Margin="0,0,0,8"/>
             <TextBlock Text="The board"
-                       FontSize="22"
+                       FontSize="18"
                        Foreground="White"
-                       HorizontalAlignment="Center"
-                       Margin="0,20,0,0"/>
+                       HorizontalAlignment="Center"/>
             <StackPanel x:Name="BoardPanel"
                         Orientation="Horizontal"
                         HorizontalAlignment="Center"/>
-            <TextBlock Text="Your cards"
-                       FontSize="22"
-                       Foreground="White"
-                       HorizontalAlignment="Center"/>
-            <StackPanel x:Name="HolePanel"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                <StackPanel Width="240" Margin="0,0,36,0">
+                    <TextBlock Text="Your cards"
+                               FontSize="18"
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel x:Name="HolePanel"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Width="240" Margin="36,0,0,0">
+                    <TextBlock Text="Opponent"
+                               FontSize="18"
+                               Foreground="White"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel x:Name="OpponentPanel"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
                 <Button Content="Check" Margin="6" Padding="14,6" Click="Check_Click"/>
                 <Button Content="Bet 20" Margin="6" Padding="14,6" Click="Bet_Click"/>
                 <Button Content="Deal next" Margin="6" Padding="14,6" Click="DealNext_Click"/>
             </StackPanel>
-            <TextBlock Text="Opponent"
+            <TextBlock x:Name="HandNameText"
                        FontSize="22"
                        Foreground="White"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       MaxWidth="760"
                        HorizontalAlignment="Center"
-                       Margin="0,16,0,0"/>
-            <StackPanel x:Name="OpponentPanel"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center"/>
-            <TextBlock x:Name="HandNameText"
-                       FontSize="28"
-                       Foreground="White"
-                       HorizontalAlignment="Center"
-                       Margin="0,20,0,0"/>
+                       Margin="0,14,0,0"/>
         </StackPanel>
     </Grid>
 </Window>

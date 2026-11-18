@@ -183,15 +183,15 @@ public partial class MainWindow : Window
     {
         TextBlock label = new TextBlock();
         label.Text = RankLabel(card.Rank) + "\n" + SuitSymbol(card.Suit);
-        label.FontSize = 28;
+        label.FontSize = 22;
         label.Foreground = SuitBrush(card.Suit);
         label.HorizontalAlignment = HorizontalAlignment.Center;
         label.VerticalAlignment = VerticalAlignment.Center;
 
         Border face = new Border();
-        face.Width = 90;
-        face.Height = 130;
-        face.Margin = new Thickness(8);
+        face.Width = 72;
+        face.Height = 104;
+        face.Margin = new Thickness(4);
         face.Background = Brushes.White;
         face.BorderBrush = Brushes.Black;
         face.BorderThickness = new Thickness(2);
