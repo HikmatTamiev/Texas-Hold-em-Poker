@@ -73,6 +73,22 @@ public partial class MainWindow : Window
         HandNameText.Text = "Preflop. Check or bet, then deal the flop.";
     }
 
+    private void Fold_Click(object sender, RoutedEventArgs e)
+    {
+        if (street == 3)
+        {
+            return;
+        }
+
+        int won = pot;
+        opponent.Receive(won);
+        pot = 0;
+        street = 3;
+        hasActed = true;
+        ShowChips();
+        HandNameText.Text = "You folded. Opponent wins " + won + ".";
+    }
+
     private void Check_Click(object sender, RoutedEventArgs e)
     {
         if (street == 3 || hasActed)
@@ -161,15 +177,28 @@ public partial class MainWindow : Window
 
         if (yourHand > opponentHand)
         {
-            HandNameText.Text = "You win with " + evaluator.Describe(yourHand) + ".";
+            int won = pot;
+            you.Receive(won);
+            pot = 0;
+            ShowChips();
+            HandNameText.Text = "You win " + won + " with " + evaluator.Describe(yourHand) + ".";
         }
         else if (opponentHand > yourHand)
         {
-            HandNameText.Text = "Opponent wins with " + evaluator.Describe(opponentHand) + ".";
+            int won = pot;
+            opponent.Receive(won);
+            pot = 0;
+            ShowChips();
+            HandNameText.Text = "Opponent wins " + won + " with " + evaluator.Describe(opponentHand) + ".";
         }
         else
         {
-            HandNameText.Text = "Both have " + evaluator.Describe(yourHand) + ". The winner is not decided yet.";
+            int share = pot / 2;
+            opponent.Receive(share);
+            you.Receive(pot - share);
+            pot = 0;
+            ShowChips();
+            HandNameText.Text = "Both have " + evaluator.Describe(yourHand) + ". The pot is split.";
         }
     }
 

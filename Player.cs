@@ -15,4 +15,9 @@ public class Player
     {
         Chips -= amount;
     }
+
+    public void Receive(int amount)
+    {
+        Chips += amount;
+    }
 }
