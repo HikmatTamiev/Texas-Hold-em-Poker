@@ -16,12 +16,12 @@ namespace TexasHoldem;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private Deck deck;
+    private Deck deck = new Deck();
     private Player you;
     private Player opponent;
-    private List<Card> holeCards;
-    private List<Card> opponentHoleCards;
-    private List<Card> boardCards;
+    private List<Card> holeCards = new List<Card>();
+    private List<Card> opponentHoleCards = new List<Card>();
+    private List<Card> boardCards = new List<Card>();
     private int pot;
     private int street;
     private bool hasActed;
@@ -32,9 +32,29 @@ public partial class MainWindow : Window
 
         you = new Player("You", 1000);
         opponent = new Player("Opponent", 1000);
+        StartHand();
+    }
 
+    private void NewHand_Click(object sender, RoutedEventArgs e)
+    {
+        StartHand();
+    }
+
+    private void StartHand()
+    {
         int smallBlind = 10;
         int bigBlind = 20;
+
+        if (you.Chips < smallBlind || opponent.Chips < bigBlind)
+        {
+            HandNameText.Text = "Not enough chips for another hand.";
+            return;
+        }
+
+        HolePanel.Children.Clear();
+        BoardPanel.Children.Clear();
+        OpponentPanel.Children.Clear();
+
         you.Pay(smallBlind);
         opponent.Pay(bigBlind);
         pot = smallBlind + bigBlind;
@@ -49,6 +69,7 @@ public partial class MainWindow : Window
         opponentHoleCards = TakeCards(2);
 
         street = 0;
+        hasActed = false;
         HandNameText.Text = "Preflop. Check or bet, then deal the flop.";
     }
 
