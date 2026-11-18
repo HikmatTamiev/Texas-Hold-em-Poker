@@ -1,0 +1,39 @@
+﻿<Window x:Class="TexasHoldem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TexasHoldem"
+        mc:Ignorable="d"
+        Title="Texas Hold'em" Height="700" Width="800"
+        Background="#146C36">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Texas Hold'em"
+                       FontSize="40"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,20"/>
+            <TextBlock Text="Your cards"
+                       FontSize="22"
+                       Foreground="White"
+                       HorizontalAlignment="Center"/>
+            <StackPanel x:Name="HolePanel"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"/>
+            <TextBlock Text="The board"
+                       FontSize="22"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       Margin="0,20,0,0"/>
+            <StackPanel x:Name="BoardPanel"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"/>
+            <TextBlock x:Name="HandNameText"
+                       FontSize="28"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       Margin="0,20,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>
