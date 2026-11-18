@@ -13,6 +13,6 @@ public class Player
 
     public void Pay(int amount)
     {
-        Chips = Chips - amount;
+        Chips -= amount;
     }
 }
