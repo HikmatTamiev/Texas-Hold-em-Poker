@@ -159,7 +159,7 @@ public class HandEvaluator
         foreach (Card card in cards)
         {
             int rankNumber = (int)card.Rank;
-            counts[rankNumber] = counts[rankNumber] + 1;
+            counts[rankNumber] += 1;
         }
 
         return counts;

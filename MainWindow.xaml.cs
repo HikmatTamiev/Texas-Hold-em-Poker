@@ -20,6 +20,20 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        Player you = new Player("You", 1000);
+        Player opponent = new Player("Opponent", 1000);
+
+        int smallBlind = 10;
+        int bigBlind = 20;
+
+        you.Pay(smallBlind);
+        opponent.Pay(bigBlind);
+
+        int pot = smallBlind + bigBlind;
+        ChipText.Text = you.Name + ": " + you.Chips + " chips"
+            + "\n" + opponent.Name + ": " + opponent.Chips + " chips"
+            + "\nPot: " + pot;
+
         Deck deck = new Deck();
         deck.Shuffle();
 
