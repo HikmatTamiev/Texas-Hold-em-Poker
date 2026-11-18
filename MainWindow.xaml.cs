@@ -172,24 +172,25 @@ public partial class MainWindow : Window
         opponentSeven.AddRange(boardCards);
 
         HandEvaluator evaluator = new HandEvaluator();
-        HandCategory yourHand = evaluator.BestOfSeven(yourSeven);
-        HandCategory opponentHand = evaluator.BestOfSeven(opponentSeven);
+        HandStrength yourHand = evaluator.BestOfSeven(yourSeven);
+        HandStrength opponentHand = evaluator.BestOfSeven(opponentSeven);
+        int comparison = yourHand.Compare(opponentHand);
 
-        if (yourHand > opponentHand)
+        if (comparison > 0)
         {
             int won = pot;
             you.Receive(won);
             pot = 0;
             ShowChips();
-            HandNameText.Text = "You win " + won + " with " + evaluator.Describe(yourHand) + ".";
+            HandNameText.Text = "You win " + won + " with " + evaluator.Describe(yourHand.Category) + ".";
         }
-        else if (opponentHand > yourHand)
+        else if (comparison < 0)
         {
             int won = pot;
             opponent.Receive(won);
             pot = 0;
             ShowChips();
-            HandNameText.Text = "Opponent wins " + won + " with " + evaluator.Describe(opponentHand) + ".";
+            HandNameText.Text = "Opponent wins " + won + " with " + evaluator.Describe(opponentHand.Category) + ".";
         }
         else
         {
@@ -198,7 +199,7 @@ public partial class MainWindow : Window
             you.Receive(pot - share);
             pot = 0;
             ShowChips();
-            HandNameText.Text = "Both have " + evaluator.Describe(yourHand) + ". The pot is split.";
+            HandNameText.Text = "Both have " + evaluator.Describe(yourHand.Category) + ". The pot is split.";
         }
     }
 

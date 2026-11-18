@@ -16,9 +16,56 @@ public enum HandCategory
     RoyalFlush
 }
 
+public class HandStrength
+{
+    public HandCategory Category { get; }
+    public int[] Kickers { get; }
+
+    public HandStrength(HandCategory category, int[] kickers)
+    {
+        Category = category;
+        Kickers = kickers;
+    }
+
+    public int Compare(HandStrength other)
+    {
+        if (Category > other.Category)
+        {
+            return 1;
+        }
+
+        if (Category < other.Category)
+        {
+            return -1;
+        }
+
+        int count = Kickers.Length;
+
+        if (other.Kickers.Length < count)
+        {
+            count = other.Kickers.Length;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            if (Kickers[i] > other.Kickers[i])
+            {
+                return 1;
+            }
+
+            if (Kickers[i] < other.Kickers[i])
+            {
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+}
+
 public class HandEvaluator
 {
-    public HandCategory Evaluate(List<Card> cards)
+    public HandStrength Evaluate(List<Card> cards)
     {
         int[] counts = CountRanks(cards);
         bool flush = IsFlush(cards);
@@ -26,55 +73,55 @@ public class HandEvaluator
 
         if (flush && IsRoyal(counts))
         {
-            return HandCategory.RoyalFlush;
+            return new HandStrength(HandCategory.RoyalFlush, new int[] { });
         }
 
         if (flush && straight)
         {
-            return HandCategory.StraightFlush;
+            return new HandStrength(HandCategory.StraightFlush, new int[] { StraightHigh(counts) });
         }
 
         if (HasCount(counts, 4))
         {
-            return HandCategory.FourOfAKind;
+            return new HandStrength(HandCategory.FourOfAKind, Join(RanksWithCount(counts, 4), RanksWithCount(counts, 1)));
         }
 
         if (HasCount(counts, 3) && HasCount(counts, 2))
         {
-            return HandCategory.FullHouse;
+            return new HandStrength(HandCategory.FullHouse, Join(RanksWithCount(counts, 3), RanksWithCount(counts, 2)));
         }
 
         if (flush)
         {
-            return HandCategory.Flush;
+            return new HandStrength(HandCategory.Flush, RanksWithCount(counts, 1));
         }
 
         if (straight)
         {
-            return HandCategory.Straight;
+            return new HandStrength(HandCategory.Straight, new int[] { StraightHigh(counts) });
         }
 
         if (HasCount(counts, 3))
         {
-            return HandCategory.ThreeOfAKind;
+            return new HandStrength(HandCategory.ThreeOfAKind, Join(RanksWithCount(counts, 3), RanksWithCount(counts, 1)));
         }
 
         if (CountPairs(counts) == 2)
         {
-            return HandCategory.TwoPair;
+            return new HandStrength(HandCategory.TwoPair, Join(RanksWithCount(counts, 2), RanksWithCount(counts, 1)));
         }
 
         if (CountPairs(counts) == 1)
         {
-            return HandCategory.Pair;
+            return new HandStrength(HandCategory.Pair, Join(RanksWithCount(counts, 2), RanksWithCount(counts, 1)));
         }
 
-        return HandCategory.HighCard;
+        return new HandStrength(HandCategory.HighCard, RanksWithCount(counts, 1));
     }
 
-    public HandCategory BestOfSeven(List<Card> cards)
+    public HandStrength BestOfSeven(List<Card> cards)
     {
-        HandCategory best = HandCategory.HighCard;
+        HandStrength best = new HandStrength(HandCategory.HighCard, new int[] { 0 });
 
         for (int skipA = 0; skipA < cards.Count; skipA++)
         {
@@ -90,11 +137,11 @@ public class HandEvaluator
                     }
                 }
 
-                HandCategory category = Evaluate(five);
+                HandStrength strength = Evaluate(five);
 
-                if (category > best)
+                if (strength.Compare(best) > 0)
                 {
-                    best = category;
+                    best = strength;
                 }
             }
         }
@@ -150,6 +197,59 @@ public class HandEvaluator
         }
 
         return "High card";
+    }
+
+    private int[] RanksWithCount(int[] counts, int wanted)
+    {
+        List<int> ranks = new List<int>();
+
+        for (int rank = 14; rank >= 2; rank--)
+        {
+            if (counts[rank] == wanted)
+            {
+                ranks.Add(rank);
+            }
+        }
+
+        return ranks.ToArray();
+    }
+
+    private int[] Join(int[] first, int[] second)
+    {
+        int[] combined = new int[first.Length + second.Length];
+
+        for (int i = 0; i < first.Length; i++)
+        {
+            combined[i] = first[i];
+        }
+
+        for (int i = 0; i < second.Length; i++)
+        {
+            combined[first.Length + i] = second[i];
+        }
+
+        return combined;
+    }
+
+    private int StraightHigh(int[] counts)
+    {
+        if (IsWheel(counts))
+        {
+            return (int)Rank.Five;
+        }
+
+        int lowest = 0;
+
+        for (int rank = 2; rank <= 14; rank++)
+        {
+            if (counts[rank] > 0)
+            {
+                lowest = rank;
+                break;
+            }
+        }
+
+        return lowest + 4;
     }
 
     private int[] CountRanks(List<Card> cards)
