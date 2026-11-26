@@ -16,6 +16,19 @@ public class Player
         Chips -= amount;
     }
 
+    public int PayUpTo(int amount)
+    {
+        int paid = amount;
+
+        if (paid > Chips)
+        {
+            paid = Chips;
+        }
+
+        Chips -= paid;
+        return paid;
+    }
+
     public void Receive(int amount)
     {
         Chips += amount;
