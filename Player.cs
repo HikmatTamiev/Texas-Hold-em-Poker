@@ -33,4 +33,9 @@ public class Player
     {
         Chips += amount;
     }
+
+    public void SetChips(int amount)
+    {
+        Chips = amount;
+    }
 }

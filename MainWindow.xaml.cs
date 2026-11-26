@@ -46,6 +46,17 @@ public partial class MainWindow : Window
         StartHand();
     }
 
+    private void ResetStacks_Click(object sender, RoutedEventArgs e)
+    {
+        you.SetChips(1000);
+        opponent.SetChips(1000);
+        pot = 0;
+        youPostSmallBlind = true;
+        HistoryText.Text = "Last hand: stacks reset to 1000.";
+        StartHand();
+        HandNameText.Text = "Stacks reset to 1000. " + HandNameText.Text;
+    }
+
     private void StartHand()
     {
         int smallBlind = 10;
@@ -69,7 +80,8 @@ public partial class MainWindow : Window
 
         if (smallBlindPlayer.Chips < smallBlind || bigBlindPlayer.Chips < bigBlind)
         {
-            HandNameText.Text = "Not enough chips for another hand.";
+            HandNameText.Text = "Not enough chips for another hand. Use Reset stacks.";
+            UpdateButtons();
             return;
         }
 
@@ -567,6 +579,7 @@ public partial class MainWindow : Window
         RaiseButton.IsEnabled = canAnswerBet && you.Chips > facingBetAmount;
         DealNextButton.IsEnabled = handOpen && hasActed && !facingBet;
         NewHandButton.IsEnabled = true;
+        ResetStacksButton.IsEnabled = true;
 
         if (facingBet)
         {

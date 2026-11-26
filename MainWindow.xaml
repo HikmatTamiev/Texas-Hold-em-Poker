@@ -61,6 +61,7 @@
                 <Button x:Name="BetButton" Content="Bet 20" Margin="6" Padding="14,6" Click="Bet_Click"/>
                 <Button x:Name="DealNextButton" Content="Deal next" Margin="6" Padding="14,6" Click="DealNext_Click"/>
                 <Button x:Name="NewHandButton" Content="New hand" Margin="6" Padding="14,6" Click="NewHand_Click"/>
+                <Button x:Name="ResetStacksButton" Content="Reset stacks" Margin="6" Padding="14,6" Click="ResetStacks_Click"/>
             </StackPanel>
             <TextBlock x:Name="HandNameText"
                        FontSize="22"
