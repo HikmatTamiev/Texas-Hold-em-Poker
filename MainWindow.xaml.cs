@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     private int pot;
     private int street;
     private bool hasActed;
+    private bool youPostSmallBlind = true;
 
     public MainWindow()
     {
@@ -44,8 +45,24 @@ public partial class MainWindow : Window
     {
         int smallBlind = 10;
         int bigBlind = 20;
+        Player smallBlindPlayer;
+        Player bigBlindPlayer;
+        string blindText;
 
-        if (you.Chips < smallBlind || opponent.Chips < bigBlind)
+        if (youPostSmallBlind)
+        {
+            smallBlindPlayer = you;
+            bigBlindPlayer = opponent;
+            blindText = "You post the small blind, 10. Opponent posts 20.";
+        }
+        else
+        {
+            smallBlindPlayer = opponent;
+            bigBlindPlayer = you;
+            blindText = "Opponent posts the small blind, 10. You post 20.";
+        }
+
+        if (smallBlindPlayer.Chips < smallBlind || bigBlindPlayer.Chips < bigBlind)
         {
             HandNameText.Text = "Not enough chips for another hand.";
             return;
@@ -55,8 +72,8 @@ public partial class MainWindow : Window
         BoardPanel.Children.Clear();
         OpponentPanel.Children.Clear();
 
-        you.Pay(smallBlind);
-        opponent.Pay(bigBlind);
+        smallBlindPlayer.Pay(smallBlind);
+        bigBlindPlayer.Pay(bigBlind);
         pot = smallBlind + bigBlind;
         ShowChips();
 
@@ -70,7 +87,8 @@ public partial class MainWindow : Window
 
         street = 0;
         hasActed = false;
-        HandNameText.Text = "Preflop. Check or bet, then deal the flop.";
+        youPostSmallBlind = !youPostSmallBlind;
+        HandNameText.Text = blindText + " Check or bet, then deal the flop.";
     }
 
     private void Fold_Click(object sender, RoutedEventArgs e)
