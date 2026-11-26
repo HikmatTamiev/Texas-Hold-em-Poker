@@ -95,6 +95,7 @@ public partial class MainWindow : Window
         facingBetAmount = 0;
         youPostSmallBlind = !youPostSmallBlind;
         HandNameText.Text = blindText + " Check or bet, then deal the flop.";
+        UpdateButtons();
     }
 
     private void Fold_Click(object sender, RoutedEventArgs e)
@@ -113,6 +114,7 @@ public partial class MainWindow : Window
         facingBetAmount = 0;
         ShowChips();
         HandNameText.Text = "You folded. Opponent wins " + won + ".";
+        UpdateButtons();
     }
 
     private void Check_Click(object sender, RoutedEventArgs e)
@@ -140,11 +142,13 @@ public partial class MainWindow : Window
             hasActed = false;
             ShowChips();
             HandNameText.Text = "You checked. Opponent bets " + paid + ". Call, raise, or fold.";
+            UpdateButtons();
             return;
         }
 
         hasActed = true;
         HandNameText.Text = "You checked. Opponent checks. Deal the next cards.";
+        UpdateButtons();
     }
 
     private void Call_Click(object sender, RoutedEventArgs e)
@@ -174,6 +178,7 @@ public partial class MainWindow : Window
         {
             HandNameText.Text = "You are all in for " + paid + ".";
             FinishAllIn();
+            UpdateButtons();
             return;
         }
 
@@ -183,6 +188,8 @@ public partial class MainWindow : Window
         {
             FinishAllIn();
         }
+
+        UpdateButtons();
     }
 
     private void Raise_Click(object sender, RoutedEventArgs e)
@@ -223,6 +230,7 @@ public partial class MainWindow : Window
             RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You raised. Opponent folds. You win " + won + ".";
+            UpdateButtons();
             return;
         }
 
@@ -243,10 +251,12 @@ public partial class MainWindow : Window
         if (you.Chips == 0 || opponent.Chips == 0)
         {
             FinishAllIn();
+            UpdateButtons();
             return;
         }
 
         HandNameText.Text = HandNameText.Text + " Deal the next cards.";
+        UpdateButtons();
     }
 
     private void Bet_Click(object sender, RoutedEventArgs e)
@@ -283,6 +293,7 @@ public partial class MainWindow : Window
             RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You bet " + bet + ". Opponent folds. You win " + won + ".";
+            UpdateButtons();
             return;
         }
 
@@ -303,10 +314,12 @@ public partial class MainWindow : Window
         if (you.Chips == 0 || opponent.Chips == 0)
         {
             FinishAllIn();
+            UpdateButtons();
             return;
         }
 
         HandNameText.Text = HandNameText.Text + " Deal the next cards.";
+        UpdateButtons();
     }
 
     private void FinishAllIn()
@@ -335,6 +348,7 @@ public partial class MainWindow : Window
             ShowCards(flop, BoardPanel);
             street = 1;
             HandNameText.Text = "Flop. Check or bet.";
+            UpdateButtons();
             return;
         }
 
@@ -345,6 +359,7 @@ public partial class MainWindow : Window
             ShowCards(turn, BoardPanel);
             street = 2;
             HandNameText.Text = "Turn. Check or bet.";
+            UpdateButtons();
             return;
         }
 
@@ -353,6 +368,7 @@ public partial class MainWindow : Window
         ShowCards(river, BoardPanel);
         street = 3;
         Showdown();
+        UpdateButtons();
     }
 
     private void Showdown()
@@ -507,6 +523,30 @@ public partial class MainWindow : Window
         ChipText.Text = you.Name + ": " + you.Chips + " chips"
             + "\n" + opponent.Name + ": " + opponent.Chips + " chips"
             + "\nPot: " + pot;
+    }
+
+    private void UpdateButtons()
+    {
+        bool handOpen = street < 3;
+        bool canOpenAction = handOpen && !hasActed && !facingBet;
+        bool canAnswerBet = handOpen && facingBet;
+
+        FoldButton.IsEnabled = handOpen;
+        CheckButton.IsEnabled = canOpenAction;
+        BetButton.IsEnabled = canOpenAction && you.Chips > 0;
+        CallButton.IsEnabled = canAnswerBet;
+        RaiseButton.IsEnabled = canAnswerBet && you.Chips > facingBetAmount;
+        DealNextButton.IsEnabled = handOpen && hasActed && !facingBet;
+        NewHandButton.IsEnabled = true;
+
+        if (facingBet)
+        {
+            CallButton.Content = "Call " + facingBetAmount;
+        }
+        else
+        {
+            CallButton.Content = "Call";
+        }
     }
 
     private Border CreateCardBack()
