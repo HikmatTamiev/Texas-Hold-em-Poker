@@ -38,6 +38,7 @@ public partial class MainWindow : Window
         you = new Player("You", 1000);
         opponent = new Player("Opponent", 1000);
         StartHand();
+        HistoryText.Text = "Last hand: none yet.";
     }
 
     private void NewHand_Click(object sender, RoutedEventArgs e)
@@ -116,6 +117,7 @@ public partial class MainWindow : Window
         facingBetAmount = 0;
         ShowChips();
         HandNameText.Text = "You folded. Opponent wins " + won + ".";
+        RecordHistory("Opponent won " + won + " chips after you folded.");
         UpdateButtons();
     }
 
@@ -232,6 +234,7 @@ public partial class MainWindow : Window
             RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You raised. Opponent folds. You win " + won + ".";
+            RecordHistory("You won " + won + " chips after the opponent folded to a raise.");
             UpdateButtons();
             return;
         }
@@ -295,6 +298,7 @@ public partial class MainWindow : Window
             RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You bet " + bet + ". Opponent folds. You win " + won + ".";
+            RecordHistory("You won " + won + " chips after the opponent folded to a bet.");
             UpdateButtons();
             return;
         }
@@ -397,6 +401,7 @@ public partial class MainWindow : Window
             pot = 0;
             ShowChips();
             HandNameText.Text = "You win " + won + " with " + evaluator.Describe(yourHand.Category) + ".";
+            RecordHistory("You won " + won + " chips with " + evaluator.Describe(yourHand.Category) + ".");
         }
         else if (comparison < 0)
         {
@@ -405,16 +410,24 @@ public partial class MainWindow : Window
             pot = 0;
             ShowChips();
             HandNameText.Text = "Opponent wins " + won + " with " + evaluator.Describe(opponentHand.Category) + ".";
+            RecordHistory("Opponent won " + won + " chips with " + evaluator.Describe(opponentHand.Category) + ".");
         }
         else
         {
             int share = pot / 2;
+            int yourShare = pot - share;
             opponent.Receive(share);
-            you.Receive(pot - share);
+            you.Receive(yourShare);
             pot = 0;
             ShowChips();
             HandNameText.Text = "Both have " + evaluator.Describe(yourHand.Category) + ". The pot is split.";
+            RecordHistory("The pot was split. You took " + yourShare + ", opponent took " + share + ".");
         }
+    }
+
+    private void RecordHistory(string summary)
+    {
+        HistoryText.Text = "Last hand: " + summary;
     }
 
     private HandStrength OpponentStrength()

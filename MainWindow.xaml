@@ -70,6 +70,14 @@
                        MaxWidth="760"
                        HorizontalAlignment="Center"
                        Margin="0,14,0,0"/>
+            <TextBlock x:Name="HistoryText"
+                       FontSize="16"
+                       Foreground="#C8E6C9"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       MaxWidth="760"
+                       HorizontalAlignment="Center"
+                       Margin="0,8,0,0"/>
         </StackPanel>
     </Grid>
 </Window>
