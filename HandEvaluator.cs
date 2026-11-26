@@ -119,6 +119,43 @@ public class HandEvaluator
         return new HandStrength(HandCategory.HighCard, RanksWithCount(counts, 1));
     }
 
+    public HandStrength BestHand(List<Card> cards)
+    {
+        if (cards.Count == 5)
+        {
+            return Evaluate(cards);
+        }
+
+        if (cards.Count == 6)
+        {
+            HandStrength bestSix = new HandStrength(HandCategory.HighCard, new int[] { 0 });
+
+            for (int skip = 0; skip < cards.Count; skip++)
+            {
+                List<Card> five = new List<Card>();
+
+                for (int i = 0; i < cards.Count; i++)
+                {
+                    if (i != skip)
+                    {
+                        five.Add(cards[i]);
+                    }
+                }
+
+                HandStrength strength = Evaluate(five);
+
+                if (strength.Compare(bestSix) > 0)
+                {
+                    bestSix = strength;
+                }
+            }
+
+            return bestSix;
+        }
+
+        return BestOfSeven(cards);
+    }
+
     public HandStrength BestOfSeven(List<Card> cards)
     {
         HandStrength best = new HandStrength(HandCategory.HighCard, new int[] { 0 });

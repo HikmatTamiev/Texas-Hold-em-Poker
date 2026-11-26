@@ -120,7 +120,7 @@ public partial class MainWindow : Window
         }
 
         int bet = 20;
-        bool opponentBets = opponent.Chips >= bet && random.Next(2) == 0;
+        bool opponentBets = OpponentChoosesBet(bet);
 
         if (opponentBets)
         {
@@ -192,7 +192,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        bool opponentFolds = random.Next(3) == 0;
+        bool opponentFolds = OpponentChoosesFold();
 
         if (opponentFolds)
         {
@@ -264,8 +264,8 @@ public partial class MainWindow : Window
         opponentSeven.AddRange(boardCards);
 
         HandEvaluator evaluator = new HandEvaluator();
-        HandStrength yourHand = evaluator.BestOfSeven(yourSeven);
-        HandStrength opponentHand = evaluator.BestOfSeven(opponentSeven);
+        HandStrength yourHand = evaluator.BestHand(yourSeven);
+        HandStrength opponentHand = evaluator.BestHand(opponentSeven);
         int comparison = yourHand.Compare(opponentHand);
 
         if (comparison > 0)
@@ -293,6 +293,75 @@ public partial class MainWindow : Window
             ShowChips();
             HandNameText.Text = "Both have " + evaluator.Describe(yourHand.Category) + ". The pot is split.";
         }
+    }
+
+    private HandStrength OpponentStrength()
+    {
+        List<Card> cards = new List<Card>();
+        cards.AddRange(opponentHoleCards);
+        cards.AddRange(boardCards);
+
+        if (cards.Count < 5)
+        {
+            int first = (int)opponentHoleCards[0].Rank;
+            int second = (int)opponentHoleCards[1].Rank;
+
+            if (first < second)
+            {
+                int held = first;
+                first = second;
+                second = held;
+            }
+
+            if (first == second)
+            {
+                return new HandStrength(HandCategory.Pair, new int[] { first });
+            }
+
+            return new HandStrength(HandCategory.HighCard, new int[] { first, second });
+        }
+
+        HandEvaluator evaluator = new HandEvaluator();
+        return evaluator.BestHand(cards);
+    }
+
+    private bool OpponentChoosesBet(int bet)
+    {
+        if (opponent.Chips < bet)
+        {
+            return false;
+        }
+
+        HandStrength strength = OpponentStrength();
+
+        if (strength.Category >= HandCategory.Pair)
+        {
+            return true;
+        }
+
+        if (strength.Kickers.Length > 0 && strength.Kickers[0] >= 13)
+        {
+            return random.Next(2) == 0;
+        }
+
+        return false;
+    }
+
+    private bool OpponentChoosesFold()
+    {
+        HandStrength strength = OpponentStrength();
+
+        if (strength.Category >= HandCategory.Pair)
+        {
+            return false;
+        }
+
+        if (strength.Kickers.Length > 0 && strength.Kickers[0] >= 12)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private List<Card> TakeCards(int count)
