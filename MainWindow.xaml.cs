@@ -547,6 +547,31 @@ public partial class MainWindow : Window
         {
             CallButton.Content = "Call";
         }
+
+        UpdateStatus();
+    }
+
+    private void UpdateStatus()
+    {
+        if (street >= 3)
+        {
+            StatusText.Text = "Hand over. Start a new hand when you are ready.";
+            return;
+        }
+
+        if (facingBet)
+        {
+            StatusText.Text = "Your turn: call, raise, or fold.";
+            return;
+        }
+
+        if (!hasActed)
+        {
+            StatusText.Text = "Your turn: check or bet.";
+            return;
+        }
+
+        StatusText.Text = "Street finished. Deal the next cards.";
     }
 
     private Border CreateCardBack()
