@@ -25,7 +25,9 @@ public partial class MainWindow : Window
     private int pot;
     private int street;
     private bool hasActed;
+    private bool facingBet;
     private bool youPostSmallBlind = true;
+    private Random random = new Random();
 
     public MainWindow()
     {
@@ -87,6 +89,7 @@ public partial class MainWindow : Window
 
         street = 0;
         hasActed = false;
+        facingBet = false;
         youPostSmallBlind = !youPostSmallBlind;
         HandNameText.Text = blindText + " Check or bet, then deal the flop.";
     }
@@ -103,39 +106,107 @@ public partial class MainWindow : Window
         pot = 0;
         street = 3;
         hasActed = true;
+        facingBet = false;
         ShowChips();
         HandNameText.Text = "You folded. Opponent wins " + won + ".";
     }
 
     private void Check_Click(object sender, RoutedEventArgs e)
     {
-        if (street == 3 || hasActed)
+        if (street == 3 || hasActed || facingBet)
         {
             return;
         }
 
+        int bet = 20;
+        bool opponentBets = opponent.Chips >= bet && random.Next(2) == 0;
+
+        if (opponentBets)
+        {
+            opponent.Pay(bet);
+            pot = pot + bet;
+            facingBet = true;
+            hasActed = false;
+            ShowChips();
+            HandNameText.Text = "You checked. Opponent bets 20. Call or fold.";
+            return;
+        }
+
         hasActed = true;
-        HandNameText.Text = "You checked. Deal the next cards.";
+        HandNameText.Text = "You checked. Opponent checks. Deal the next cards.";
+    }
+
+    private void Call_Click(object sender, RoutedEventArgs e)
+    {
+        int bet = 20;
+
+        if (street == 3 || !facingBet)
+        {
+            return;
+        }
+
+        if (you.Chips < bet)
+        {
+            HandNameText.Text = "Not enough chips to call.";
+            return;
+        }
+
+        you.Pay(bet);
+        pot = pot + bet;
+        facingBet = false;
+        hasActed = true;
+        ShowChips();
+        HandNameText.Text = "You called 20. Deal the next cards.";
     }
 
     private void Bet_Click(object sender, RoutedEventArgs e)
     {
         int bet = 20;
 
-        if (street == 3 || hasActed)
+        if (street == 3 || hasActed || facingBet)
         {
             return;
         }
 
-        if (you.Chips < bet || opponent.Chips < bet)
+        if (you.Chips < bet)
         {
             HandNameText.Text = "Not enough chips.";
             return;
         }
 
         you.Pay(bet);
+        pot = pot + bet;
+
+        if (opponent.Chips < bet)
+        {
+            int won = pot;
+            you.Receive(won);
+            pot = 0;
+            street = 3;
+            hasActed = true;
+            facingBet = false;
+            ShowChips();
+            HandNameText.Text = "You bet 20. Opponent folds. You win " + won + ".";
+            return;
+        }
+
+        bool opponentFolds = random.Next(3) == 0;
+
+        if (opponentFolds)
+        {
+            int won = pot;
+            you.Receive(won);
+            pot = 0;
+            street = 3;
+            hasActed = true;
+            facingBet = false;
+            ShowChips();
+            HandNameText.Text = "You bet 20. Opponent folds. You win " + won + ".";
+            return;
+        }
+
         opponent.Pay(bet);
-        pot = pot + bet + bet;
+        pot = pot + bet;
         hasActed = true;
         ShowChips();
         HandNameText.Text = "You bet 20. Opponent calls. Deal the next cards.";
@@ -143,7 +214,7 @@ public partial class MainWindow : Window
 
     private void DealNext_Click(object sender, RoutedEventArgs e)
     {
-        if (street == 3)
+        if (street == 3 || !hasActed || facingBet)
         {
             return;
         }

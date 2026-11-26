@@ -50,6 +50,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
                 <Button Content="Fold" Margin="6" Padding="14,6" Click="Fold_Click"/>
                 <Button Content="Check" Margin="6" Padding="14,6" Click="Check_Click"/>
+                <Button Content="Call 20" Margin="6" Padding="14,6" Click="Call_Click"/>
                 <Button Content="Bet 20" Margin="6" Padding="14,6" Click="Bet_Click"/>
                 <Button Content="Deal next" Margin="6" Padding="14,6" Click="DealNext_Click"/>
                 <Button Content="New hand" Margin="6" Padding="14,6" Click="NewHand_Click"/>
