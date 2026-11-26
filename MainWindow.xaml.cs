@@ -86,6 +86,7 @@ public partial class MainWindow : Window
         holeCards = TakeCards(2);
         ShowCards(holeCards, HolePanel);
         opponentHoleCards = TakeCards(2);
+        ShowCardBacks(2, OpponentPanel);
 
         street = 0;
         hasActed = false;
@@ -185,6 +186,7 @@ public partial class MainWindow : Window
             street = 3;
             hasActed = true;
             facingBet = false;
+            RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You bet 20. Opponent folds. You win " + won + ".";
             return;
@@ -200,6 +202,7 @@ public partial class MainWindow : Window
             street = 3;
             hasActed = true;
             facingBet = false;
+            RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You bet 20. Opponent folds. You win " + won + ".";
             return;
@@ -250,7 +253,7 @@ public partial class MainWindow : Window
 
     private void Showdown()
     {
-        ShowCards(opponentHoleCards, OpponentPanel);
+        RevealOpponentCards();
 
         List<Card> yourSeven = new List<Card>();
         yourSeven.AddRange(holeCards);
@@ -312,11 +315,47 @@ public partial class MainWindow : Window
         }
     }
 
+    private void ShowCardBacks(int count, StackPanel panel)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            panel.Children.Add(CreateCardBack());
+        }
+    }
+
+    private void RevealOpponentCards()
+    {
+        OpponentPanel.Children.Clear();
+        ShowCards(opponentHoleCards, OpponentPanel);
+    }
+
     private void ShowChips()
     {
         ChipText.Text = you.Name + ": " + you.Chips + " chips"
             + "\n" + opponent.Name + ": " + opponent.Chips + " chips"
             + "\nPot: " + pot;
+    }
+
+    private Border CreateCardBack()
+    {
+        TextBlock label = new TextBlock();
+        label.Text = "?";
+        label.FontSize = 36;
+        label.Foreground = Brushes.White;
+        label.HorizontalAlignment = HorizontalAlignment.Center;
+        label.VerticalAlignment = VerticalAlignment.Center;
+
+        Border back = new Border();
+        back.Width = 72;
+        back.Height = 104;
+        back.Margin = new Thickness(4);
+        back.Background = new SolidColorBrush(Color.FromRgb(20, 60, 140));
+        back.BorderBrush = Brushes.White;
+        back.BorderThickness = new Thickness(2);
+        back.CornerRadius = new CornerRadius(8);
+        back.Child = label;
+
+        return back;
     }
 
     private Border CreateCardFace(Card card)
