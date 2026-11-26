@@ -28,6 +28,7 @@ public partial class MainWindow : Window
     private bool facingBet;
     private int facingBetAmount;
     private bool youPostSmallBlind = true;
+    private bool youAreSmallBlindThisHand = true;
     private Random random = new Random();
 
     public MainWindow()
@@ -75,6 +76,7 @@ public partial class MainWindow : Window
         BoardPanel.Children.Clear();
         OpponentPanel.Children.Clear();
 
+        youAreSmallBlindThisHand = smallBlindPlayer == you;
         smallBlindPlayer.Pay(smallBlind);
         bigBlindPlayer.Pay(bigBlind);
         pot = smallBlind + bigBlind;
@@ -520,8 +522,22 @@ public partial class MainWindow : Window
 
     private void ShowChips()
     {
-        ChipText.Text = you.Name + ": " + you.Chips + " chips"
-            + "\n" + opponent.Name + ": " + opponent.Chips + " chips"
+        string yourMark = "";
+        string opponentMark = "";
+
+        if (youAreSmallBlindThisHand)
+        {
+            yourMark = " (SB)";
+            opponentMark = " (BB)";
+        }
+        else
+        {
+            yourMark = " (BB)";
+            opponentMark = " (SB)";
+        }
+
+        ChipText.Text = you.Name + yourMark + ": " + you.Chips + " chips"
+            + "\n" + opponent.Name + opponentMark + ": " + opponent.Chips + " chips"
             + "\nPot: " + pot;
     }
 
