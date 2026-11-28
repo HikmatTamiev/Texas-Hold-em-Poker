@@ -40,6 +40,7 @@ public partial class MainWindow : Window
     private Random random = new Random();
     private Dictionary<string, BitmapImage> cardPictures = new Dictionary<string, BitmapImage>();
     private OpponentStyle opponentStyle = OpponentStyle.Normal;
+    private bool isAllInRunout;
 
     public MainWindow()
     {
@@ -116,10 +117,21 @@ public partial class MainWindow : Window
         hasActed = false;
         facingBet = false;
         facingBetAmount = 0;
+        isAllInRunout = false;
         opponentStyle = PickOpponentStyle();
         youPostSmallBlind = !youPostSmallBlind;
-        HandNameText.Text = blindText + " Preflop. Check or bet, then deal the flop.";
-        UpdateButtons();
+
+        if (youAreSmallBlindThisHand)
+        {
+            facingBet = true;
+            facingBetAmount = 10;
+            HandNameText.Text = blindText + " Preflop. Call 10, raise, or fold.";
+            UpdateButtons();
+            return;
+        }
+
+        HandNameText.Text = blindText + " Preflop. Opponent acts first.";
+        OpponentActFirstPreflop();
     }
 
     private void Fold_Click(object sender, RoutedEventArgs e)
@@ -148,31 +160,15 @@ public partial class MainWindow : Window
             return;
         }
 
-        int bet = 20;
-
-        if (opponent.Chips < bet)
+        if (!youAreSmallBlindThisHand)
         {
-            bet = opponent.Chips;
-        }
-
-        bool opponentBets = bet > 0 && OpponentChoosesBet(bet);
-
-        if (opponentBets)
-        {
-            int paid = opponent.PayUpTo(bet);
-            pot = pot + paid;
-            facingBet = true;
-            facingBetAmount = paid;
-            hasActed = false;
-            ShowChips();
-            HandNameText.Text = "You checked. Opponent bets " + paid + ". Call, raise, or fold.";
+            hasActed = true;
+            HandNameText.Text = "You checked. Deal the next cards.";
             UpdateButtons();
             return;
         }
 
-        hasActed = true;
-        HandNameText.Text = "You checked. Opponent checks. Deal the next cards.";
-        UpdateButtons();
+        OpponentReplyToCheck();
     }
 
     private void Call_Click(object sender, RoutedEventArgs e)
@@ -195,24 +191,35 @@ public partial class MainWindow : Window
 
         facingBet = false;
         facingBetAmount = 0;
-        hasActed = true;
         ShowChips();
 
         if (paid < bet)
         {
+            hasActed = true;
             HandNameText.Text = "You are all in for " + paid + ".";
             FinishAllIn();
             UpdateButtons();
             return;
         }
 
-        HandNameText.Text = "You called " + paid + ". Deal the next cards.";
-
         if (you.Chips == 0 || opponent.Chips == 0)
         {
+            hasActed = true;
+            HandNameText.Text = "You called " + paid + ".";
             FinishAllIn();
+            UpdateButtons();
+            return;
         }
 
+        if (street == 0 && youAreSmallBlindThisHand)
+        {
+            HandNameText.Text = "You called " + paid + ".";
+            OpponentBigBlindOption();
+            return;
+        }
+
+        hasActed = true;
+        HandNameText.Text = "You called " + paid + ". Deal the next cards.";
         UpdateButtons();
     }
 
@@ -348,12 +355,17 @@ public partial class MainWindow : Window
 
     private void FinishAllIn()
     {
+        isAllInRunout = true;
+
         while (street < 3)
         {
             hasActed = true;
             facingBet = false;
+            facingBetAmount = 0;
             DealNext_Click(this, new RoutedEventArgs());
         }
+
+        isAllInRunout = false;
     }
 
     private void DealNext_Click(object sender, RoutedEventArgs e)
@@ -363,16 +375,13 @@ public partial class MainWindow : Window
             return;
         }
 
-        hasActed = false;
-
         if (street == 0)
         {
             List<Card> flop = TakeCards(3);
             boardCards.AddRange(flop);
             ShowCards(flop, BoardPanel);
             street = 1;
-            HandNameText.Text = "Flop dealt. Check or bet.";
-            UpdateButtons();
+            BeginStreet("Flop dealt.");
             return;
         }
 
@@ -382,8 +391,7 @@ public partial class MainWindow : Window
             boardCards.AddRange(turn);
             ShowCards(turn, BoardPanel);
             street = 2;
-            HandNameText.Text = "Turn dealt. Check or bet.";
-            UpdateButtons();
+            BeginStreet("Turn dealt.");
             return;
         }
 
@@ -393,6 +401,187 @@ public partial class MainWindow : Window
         street = 3;
         Showdown();
         UpdateButtons();
+    }
+
+    private void BeginStreet(string dealtText)
+    {
+        hasActed = false;
+        facingBet = false;
+        facingBetAmount = 0;
+
+        if (isAllInRunout)
+        {
+            hasActed = true;
+            HandNameText.Text = dealtText;
+            UpdateButtons();
+            return;
+        }
+
+        if (!youAreSmallBlindThisHand)
+        {
+            HandNameText.Text = dealtText + " Opponent acts first.";
+            OpponentOpenAction(dealtText);
+            return;
+        }
+
+        HandNameText.Text = dealtText + " Check or bet.";
+        UpdateButtons();
+    }
+
+    private void OpponentActFirstPreflop()
+    {
+        int complete = 10;
+        int raiseExtra = 20;
+
+        if (OpponentChoosesFoldBlind())
+        {
+            int won = pot;
+            you.Receive(won);
+            pot = 0;
+            street = 3;
+            hasActed = true;
+            RevealOpponentCards();
+            ShowChips();
+            HandNameText.Text = "Opponent folds the small blind. You win " + won + ".";
+            UpdateButtons();
+            return;
+        }
+
+        if (opponent.Chips >= complete + raiseExtra && OpponentChoosesBet(complete + raiseExtra))
+        {
+            int paid = opponent.PayUpTo(complete + raiseExtra);
+            pot = pot + paid;
+            facingBet = true;
+            facingBetAmount = 10 + paid - 20;
+            if (facingBetAmount < 1)
+            {
+                facingBetAmount = paid;
+            }
+
+            hasActed = false;
+            ShowChips();
+            HandNameText.Text = "Opponent raises. Call " + facingBetAmount + ", raise, or fold.";
+            UpdateButtons();
+            return;
+        }
+
+        int called = opponent.PayUpTo(complete);
+        pot = pot + called;
+        ShowChips();
+
+        if (opponent.Chips == 0)
+        {
+            hasActed = true;
+            HandNameText.Text = "Opponent is all in for " + called + ".";
+            FinishAllIn();
+            UpdateButtons();
+            return;
+        }
+
+        HandNameText.Text = "Opponent calls " + called + ". Check or raise.";
+        UpdateButtons();
+    }
+
+    private void OpponentBigBlindOption()
+    {
+        int bet = 20;
+
+        if (opponent.Chips < bet)
+        {
+            bet = opponent.Chips;
+        }
+
+        if (bet > 0 && OpponentChoosesBet(bet))
+        {
+            int paid = opponent.PayUpTo(bet);
+            pot = pot + paid;
+            facingBet = true;
+            facingBetAmount = paid;
+            hasActed = false;
+            ShowChips();
+            HandNameText.Text = HandNameText.Text + " Opponent raises " + paid + ". Call, raise, or fold.";
+            UpdateButtons();
+            return;
+        }
+
+        hasActed = true;
+        HandNameText.Text = HandNameText.Text + " Opponent checks. Deal the flop.";
+        UpdateButtons();
+    }
+
+    private void OpponentReplyToCheck()
+    {
+        int bet = 20;
+
+        if (opponent.Chips < bet)
+        {
+            bet = opponent.Chips;
+        }
+
+        if (bet > 0 && OpponentChoosesBet(bet))
+        {
+            int paid = opponent.PayUpTo(bet);
+            pot = pot + paid;
+            facingBet = true;
+            facingBetAmount = paid;
+            hasActed = false;
+            ShowChips();
+            HandNameText.Text = "You checked. Opponent bets " + paid + ". Call, raise, or fold.";
+            UpdateButtons();
+            return;
+        }
+
+        hasActed = true;
+        HandNameText.Text = "You checked. Opponent checks. Deal the next cards.";
+        UpdateButtons();
+    }
+
+    private void OpponentOpenAction(string dealtText)
+    {
+        int bet = 20;
+
+        if (opponent.Chips < bet)
+        {
+            bet = opponent.Chips;
+        }
+
+        if (bet > 0 && OpponentChoosesBet(bet))
+        {
+            int paid = opponent.PayUpTo(bet);
+            pot = pot + paid;
+            facingBet = true;
+            facingBetAmount = paid;
+            hasActed = false;
+            ShowChips();
+            HandNameText.Text = dealtText + " Opponent bets " + paid + ". Call, raise, or fold.";
+            UpdateButtons();
+            return;
+        }
+
+        HandNameText.Text = dealtText + " Opponent checks. Check or bet.";
+        UpdateButtons();
+    }
+
+    private bool OpponentChoosesFoldBlind()
+    {
+        int power = OpponentPower();
+
+        if (power >= 1)
+        {
+            return false;
+        }
+
+        int foldChance = 25;
+        if (opponentStyle == OpponentStyle.Tight)
+        {
+            foldChance = 40;
+        }
+        else if (opponentStyle == OpponentStyle.Aggressive)
+        {
+            foldChance = 10;
+        }
+
+        return Chance(foldChance);
     }
 
     private void Showdown()
