@@ -51,7 +51,9 @@
                Stretch="UniformToFill"
                StretchDirection="Both"
                HorizontalAlignment="Center"
-               VerticalAlignment="Center"/>
+               VerticalAlignment="Center"
+               RenderOptions.BitmapScalingMode="HighQuality"
+               SnapsToDevicePixels="True"/>
 
         <Grid Margin="18">
             <Grid.RowDefinitions>
