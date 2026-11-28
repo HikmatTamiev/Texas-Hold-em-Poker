@@ -469,6 +469,37 @@ public partial class MainWindow : Window
         BetSliderPanel.Visibility = Visibility.Collapsed;
     }
 
+    private void AllIn_Click(object sender, RoutedEventArgs e)
+    {
+        HideAmountPanels();
+
+        if (street == 3 || you.Chips == 0)
+        {
+            return;
+        }
+
+        if (facingBet)
+        {
+            int raiseExtra = you.Chips - facingBetAmount;
+
+            if (raiseExtra <= 0)
+            {
+                Call_Click(sender, e);
+                return;
+            }
+
+            PerformRaise(raiseExtra);
+            return;
+        }
+
+        if (hasActed)
+        {
+            return;
+        }
+
+        PerformBet(you.Chips);
+    }
+
     private void FinishAllIn()
     {
         isAllInRunout = true;
@@ -1019,6 +1050,7 @@ public partial class MainWindow : Window
 
         bool canBet = canOpenAction && you.Chips > 0;
         bool canRaise = canAnswerBet && you.Chips > facingBetAmount;
+        bool canAllIn = handOpen && you.Chips > 0 && ((!hasActed && !facingBet) || facingBet);
         bool canDeal = handOpen && hasActed && !facingBet;
         bool handOver = !handOpen;
 
@@ -1029,9 +1061,15 @@ public partial class MainWindow : Window
         ShowButton(CallButton, canAnswerBet);
         ShowButton(RaiseButton, canRaise);
         ShowButton(RaiseMenuButton, canRaise);
+        ShowButton(AllInButton, canAllIn);
         ShowButton(DealNextButton, canDeal);
         ShowButton(NewHandButton, handOver);
         ShowButton(ResetStacksButton, handOver);
+
+        if (canAllIn)
+        {
+            AllInButton.Content = "All in " + you.Chips;
+        }
 
         if (!canRaise)
         {
