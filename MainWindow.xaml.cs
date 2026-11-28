@@ -1204,16 +1204,14 @@ public partial class MainWindow : Window
     {
         Image picture = new Image();
         picture.Source = LoadCardPicture("cardbackimg.png");
-        picture.Stretch = Stretch.Fill;
-        picture.Width = 86;
-        picture.Height = 124;
+        picture.Stretch = Stretch.Uniform;
 
         Border back = new Border();
         back.Width = 86;
         back.Height = 124;
         back.Margin = new Thickness(5);
         back.CornerRadius = new CornerRadius(8);
-        back.Background = Brushes.White;
+        back.Background = Brushes.Transparent;
         back.BorderThickness = new Thickness(0);
         back.ClipToBounds = true;
         back.Effect = CardShadow();
@@ -1258,16 +1256,8 @@ public partial class MainWindow : Window
         for (int i = 0; i < layers; i++)
         {
             Border card = CreateCardBack();
-            card.Width = 84;
-            card.Height = 120;
             card.Margin = new Thickness(0);
             card.Effect = null;
-            if (card.Child is Image deckPicture)
-            {
-                deckPicture.Width = 84;
-                deckPicture.Height = 120;
-            }
-
             Canvas.SetLeft(card, 4 + i * 1.2);
             Canvas.SetTop(card, 4 + (layers - 1 - i) * 1.2);
             DeckCanvas.Children.Add(card);
