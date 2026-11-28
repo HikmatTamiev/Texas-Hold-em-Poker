@@ -104,9 +104,12 @@
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
                      Margin="0,0,0,8">
-                <Grid Width="920" Height="500" ClipToBounds="False">
-                    <!-- Cards stay at the true center, same as the title. -->
-                    <StackPanel Width="640" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!-- No fixed height — that was cropping the top and bottom cards. -->
+                <Grid Width="920">
+                    <StackPanel Width="640"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="0,12">
                         <Border Background="#C218100A"
                                 BorderBrush="#66D4AF37"
                                 BorderThickness="1"
@@ -139,7 +142,7 @@
                                     <TextBlock x:Name="PotAmountText" Text="30" Style="{StaticResource ChipAmount}" FontSize="22" Margin="12,0,0,0" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
-                            <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="120"/>
+                            <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="134"/>
                         </StackPanel>
 
                         <Border Background="#C218100A"
@@ -162,7 +165,6 @@
                         </Border>
                     </StackPanel>
 
-                    <!-- Deck is shifted right without moving the centered cards. -->
                     <Border HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Background="#C2102E1A"
