@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Texas Hold'em" Height="820" Width="1100"
-        MinHeight="760" MinWidth="980"
+        Title="Texas Hold'em" Height="860" Width="1100"
+        MinHeight="800" MinWidth="980"
         FontFamily="pack://application:,,,/Fonts/#Cinzel"
         Background="#0B3D24">
     <Window.Resources>
@@ -97,90 +97,92 @@
                 </TextBlock.Effect>
             </TextBlock>
 
-            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="130"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Empty left column balances the deck so the cards stay under the title. -->
-                <Border Grid.Column="0" Opacity="0" IsHitTestVisible="False"/>
-
-                <StackPanel Grid.Column="1" Width="700" HorizontalAlignment="Center">
-                    <Border Background="#C218100A"
-                            BorderBrush="#66D4AF37"
-                            BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="18,12"
-                            HorizontalAlignment="Center">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="OPPONENT" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
-                                <Border Background="#F3D38A" CornerRadius="4" Padding="8,2" Margin="12,0,0,0">
-                                    <TextBlock x:Name="OppBlindText" Text="BB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
-                                </Border>
-                                <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="OppChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel x:Name="OpponentPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                        </StackPanel>
-                    </Border>
-
-                    <StackPanel HorizontalAlignment="Center" Margin="0,18,0,18">
-                        <Border Background="#C2102E1A"
+            <!-- Scales down if needed so cards never cover the button row. -->
+            <Viewbox Grid.Row="1"
+                     Stretch="Uniform"
+                     StretchDirection="DownOnly"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Margin="0,0,0,8">
+                <Grid Width="920" Height="500" ClipToBounds="False">
+                    <!-- Cards stay at the true center, same as the title. -->
+                    <StackPanel Width="640" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Border Background="#C218100A"
                                 BorderBrush="#66D4AF37"
                                 BorderThickness="1"
-                                CornerRadius="12"
-                                Padding="18,8"
-                                HorizontalAlignment="Center"
-                                Margin="0,0,0,10">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="POT" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="PotAmountText" Text="30" Style="{StaticResource ChipAmount}" FontSize="22" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                CornerRadius="14"
+                                Padding="16,10"
+                                HorizontalAlignment="Center">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="OPPONENT" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
+                                    <Border Background="#F3D38A" CornerRadius="4" Padding="8,2" Margin="12,0,0,0">
+                                        <TextBlock x:Name="OppBlindText" Text="BB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
+                                    </Border>
+                                    <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="OppChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel x:Name="OpponentPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                             </StackPanel>
                         </Border>
-                        <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="134"/>
+
+                        <StackPanel HorizontalAlignment="Center" Margin="0,14,0,14">
+                            <Border Background="#C2102E1A"
+                                    BorderBrush="#66D4AF37"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="16,6"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="POT" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="PotAmountText" Text="30" Style="{StaticResource ChipAmount}" FontSize="22" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="120"/>
+                        </StackPanel>
+
+                        <Border Background="#C218100A"
+                                BorderBrush="#66D4AF37"
+                                BorderThickness="1"
+                                CornerRadius="14"
+                                Padding="16,10"
+                                HorizontalAlignment="Center">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                    <TextBlock Text="YOU" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
+                                    <Border Background="#F3D38A" CornerRadius="4" Padding="8,2" Margin="12,0,0,0">
+                                        <TextBlock x:Name="YouBlindText" Text="SB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
+                                    </Border>
+                                    <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="YouChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
 
-                    <Border Background="#C218100A"
+                    <!-- Deck is shifted right without moving the centered cards. -->
+                    <Border HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#C2102E1A"
                             BorderBrush="#66D4AF37"
                             BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="18,12"
-                            HorizontalAlignment="Center">
+                            CornerRadius="12"
+                            Padding="10,10">
+                        <Border.RenderTransform>
+                            <TranslateTransform X="390"/>
+                        </Border.RenderTransform>
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                                <TextBlock Text="YOU" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
-                                <Border Background="#F3D38A" CornerRadius="4" Padding="8,2" Margin="12,0,0,0">
-                                    <TextBlock x:Name="YouBlindText" Text="SB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
-                                </Border>
-                                <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="YouChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
+                            <TextBlock Text="DECK" Style="{StaticResource SeatLabel}" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                            <Canvas x:Name="DeckCanvas" Width="96" Height="136" ClipToBounds="True"/>
+                            <TextBlock x:Name="DeckCountText" Text="52" Style="{StaticResource ChipAmount}" FontSize="15" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Border>
-                </StackPanel>
+                </Grid>
+            </Viewbox>
 
-                <Border Grid.Column="2"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"
-                        Margin="12,0,0,0"
-                        Background="#C2102E1A"
-                        BorderBrush="#66D4AF37"
-                        BorderThickness="1"
-                        CornerRadius="12"
-                        Padding="10,10">
-                    <StackPanel>
-                        <TextBlock Text="DECK" Style="{StaticResource SeatLabel}" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                        <Canvas x:Name="DeckCanvas" Width="96" Height="136" ClipToBounds="True"/>
-                        <TextBlock x:Name="DeckCountText" Text="52" Style="{StaticResource ChipAmount}" FontSize="15" HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                    </StackPanel>
-                </Border>
-            </Grid>
-
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,18,0,0">
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,4,0,0" Panel.ZIndex="5">
                 <Border Background="#9918100A"
                         BorderBrush="#55D4AF37"
                         BorderThickness="1"
