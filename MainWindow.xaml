@@ -62,24 +62,17 @@
                    Margin="0,0,0,12"/>
 
         <Viewbox Grid.Row="1" Stretch="Uniform">
-            <Grid Width="1000" Height="700">
-                <Ellipse Stroke="#6B4A2A" StrokeThickness="16">
-                    <Ellipse.Fill>
-                        <RadialGradientBrush>
-                            <GradientStop Color="#24964E" Offset="0"/>
-                            <GradientStop Color="#146C36" Offset="0.62"/>
-                            <GradientStop Color="#0B4422" Offset="1"/>
-                        </RadialGradientBrush>
-                    </Ellipse.Fill>
-                </Ellipse>
+            <Grid Width="1100" Height="620" ClipToBounds="True">
+                <Image Source="pack://application:,,,/Images/table_background.jpg"
+                       Stretch="UniformToFill"
+                       StretchDirection="Both"/>
 
                 <Border HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Margin="0,0,70,40"
-                        Background="#102E1A"
+                        Margin="0,0,36,20"
+                        Background="#CC102E1A"
                         CornerRadius="14"
-                        Padding="12,10"
-                        Opacity="0.96">
+                        Padding="12,10">
                     <StackPanel>
                         <TextBlock Text="DECK" FontSize="12" FontWeight="Bold" Foreground="#F3D38A" HorizontalAlignment="Center" Margin="0,0,0,6"/>
                         <Canvas x:Name="DeckCanvas" Width="96" Height="136" ClipToBounds="True"/>
@@ -87,8 +80,8 @@
                     </StackPanel>
                 </Border>
 
-                <StackPanel Width="760" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,40,0">
-                    <Border Background="#1A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center" Opacity="0.94">
+                <StackPanel Width="720" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="160,0,20,0">
+                    <Border Background="#B31A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock Text="OPPONENT" FontSize="13" FontWeight="Bold" Foreground="#C8B48A" VerticalAlignment="Center"/>
@@ -103,7 +96,7 @@
                     </Border>
 
                     <StackPanel HorizontalAlignment="Center" Margin="0,16,0,16">
-                        <Border Background="#102E1A" CornerRadius="18" Padding="16,6" HorizontalAlignment="Center" Margin="0,0,0,8">
+                        <Border Background="#B3102E1A" CornerRadius="18" Padding="16,6" HorizontalAlignment="Center" Margin="0,0,0,8">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="POT" FontSize="12" FontWeight="Bold" Foreground="#F3D38A" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="PotAmountText" Text="30" FontSize="20" FontWeight="Bold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
@@ -113,7 +106,7 @@
                         <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="134"/>
                     </StackPanel>
 
-                    <Border Background="#1A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center" Opacity="0.94">
+                    <Border Background="#B31A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center">
                         <StackPanel>
                             <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
