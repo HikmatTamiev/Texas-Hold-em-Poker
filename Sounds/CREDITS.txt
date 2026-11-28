@@ -1,3 +1,6 @@
-Sounds from Kenney.nl (Casino Audio + Interface Sounds)
+SFX from Kenney.nl (Casino Audio + Interface Sounds)
 License: CC0 1.0 Universal (public domain)
 https://kenney.nl
+
+Background ambiance: freesound_community-casino-ambiance-19130.mp3
+Source file provided by the project author (Freesound community)

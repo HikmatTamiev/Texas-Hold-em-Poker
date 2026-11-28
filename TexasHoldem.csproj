@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Content Include="Sounds\*.wav" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Sounds\*.mp3" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Sounds\CREDITS.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

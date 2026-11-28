@@ -46,10 +46,12 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Closed += (_, _) => GameSounds.StopAmbiance();
 
         you = new Player("You", 1000);
         opponent = new Player("Opponent", 1000);
         StartHand();
+        GameSounds.StartAmbiance();
     }
 
     private void NewHand_Click(object sender, RoutedEventArgs e)
