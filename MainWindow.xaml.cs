@@ -225,8 +225,58 @@ public partial class MainWindow : Window
 
     private void Raise_Click(object sender, RoutedEventArgs e)
     {
-        int raiseAmount = 20;
+        HideAmountPanels();
+        PerformRaise(20);
+    }
 
+    private void RaiseMenu_Click(object sender, RoutedEventArgs e)
+    {
+        if (street == 3 || !facingBet || you.Chips <= facingBetAmount)
+        {
+            return;
+        }
+
+        BetSliderPanel.Visibility = Visibility.Collapsed;
+
+        if (RaiseSliderPanel.Visibility == Visibility.Visible)
+        {
+            RaiseSliderPanel.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        int maxRaise = you.Chips - facingBetAmount;
+        int minRaise = 20;
+        if (maxRaise < minRaise)
+        {
+            minRaise = maxRaise;
+        }
+
+        RaiseSlider.Minimum = minRaise;
+        RaiseSlider.Maximum = maxRaise;
+        RaiseSlider.Value = minRaise;
+        RaiseAmountText.Text = "+" + minRaise;
+        RaiseSliderPanel.Visibility = Visibility.Visible;
+    }
+
+    private void RaiseSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (RaiseAmountText == null)
+        {
+            return;
+        }
+
+        RaiseAmountText.Text = "+" + (int)RaiseSlider.Value;
+    }
+
+    private void ConfirmCustomRaise_Click(object sender, RoutedEventArgs e)
+    {
+        int raiseAmount = (int)RaiseSlider.Value;
+        HideAmountPanels();
+        PerformRaise(raiseAmount);
+    }
+
+    private void PerformRaise(int raiseAmount)
+    {
         if (street == 3 || !facingBet)
         {
             return;
@@ -234,7 +284,7 @@ public partial class MainWindow : Window
 
         if (you.Chips <= facingBetAmount)
         {
-            Call_Click(sender, e);
+            Call_Click(RaiseButton, new RoutedEventArgs());
             return;
         }
 
@@ -244,6 +294,11 @@ public partial class MainWindow : Window
         {
             total = you.Chips;
             raiseAmount = total - facingBetAmount;
+        }
+
+        if (raiseAmount < 1)
+        {
+            return;
         }
 
         you.Pay(total);
@@ -277,7 +332,7 @@ public partial class MainWindow : Window
 
         hasActed = true;
         ShowChips();
-        HandNameText.Text = "You raised. Opponent calls " + opponentPaid + ".";
+        HandNameText.Text = "You raised " + raiseAmount + ". Opponent calls " + opponentPaid + ".";
 
         if (you.Chips == 0 || opponent.Chips == 0)
         {
@@ -292,8 +347,58 @@ public partial class MainWindow : Window
 
     private void Bet_Click(object sender, RoutedEventArgs e)
     {
-        int bet = 20;
+        HideAmountPanels();
+        PerformBet(20);
+    }
 
+    private void BetMenu_Click(object sender, RoutedEventArgs e)
+    {
+        if (street == 3 || hasActed || facingBet || you.Chips == 0)
+        {
+            return;
+        }
+
+        RaiseSliderPanel.Visibility = Visibility.Collapsed;
+
+        if (BetSliderPanel.Visibility == Visibility.Visible)
+        {
+            BetSliderPanel.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        int maxBet = you.Chips;
+        int minBet = 20;
+        if (maxBet < minBet)
+        {
+            minBet = maxBet;
+        }
+
+        BetSlider.Minimum = minBet;
+        BetSlider.Maximum = maxBet;
+        BetSlider.Value = minBet;
+        BetAmountText.Text = minBet.ToString();
+        BetSliderPanel.Visibility = Visibility.Visible;
+    }
+
+    private void BetSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (BetAmountText == null)
+        {
+            return;
+        }
+
+        BetAmountText.Text = ((int)BetSlider.Value).ToString();
+    }
+
+    private void ConfirmCustomBet_Click(object sender, RoutedEventArgs e)
+    {
+        int bet = (int)BetSlider.Value;
+        HideAmountPanels();
+        PerformBet(bet);
+    }
+
+    private void PerformBet(int bet)
+    {
         if (street == 3 || hasActed || facingBet)
         {
             return;
@@ -308,6 +413,11 @@ public partial class MainWindow : Window
         if (you.Chips < bet)
         {
             bet = you.Chips;
+        }
+
+        if (bet < 1)
+        {
+            return;
         }
 
         you.Pay(bet);
@@ -351,6 +461,12 @@ public partial class MainWindow : Window
 
         HandNameText.Text = HandNameText.Text + " Deal the next cards.";
         UpdateButtons();
+    }
+
+    private void HideAmountPanels()
+    {
+        RaiseSliderPanel.Visibility = Visibility.Collapsed;
+        BetSliderPanel.Visibility = Visibility.Collapsed;
     }
 
     private void FinishAllIn()
@@ -909,11 +1025,23 @@ public partial class MainWindow : Window
         ShowButton(FoldButton, handOpen);
         ShowButton(CheckButton, canOpenAction);
         ShowButton(BetButton, canBet);
+        ShowButton(BetMenuButton, canBet);
         ShowButton(CallButton, canAnswerBet);
         ShowButton(RaiseButton, canRaise);
+        ShowButton(RaiseMenuButton, canRaise);
         ShowButton(DealNextButton, canDeal);
         ShowButton(NewHandButton, handOver);
         ShowButton(ResetStacksButton, handOver);
+
+        if (!canRaise)
+        {
+            RaiseSliderPanel.Visibility = Visibility.Collapsed;
+        }
+
+        if (!canBet)
+        {
+            BetSliderPanel.Visibility = Visibility.Collapsed;
+        }
 
         if (facingBet)
         {
