@@ -85,17 +85,26 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0"
-                       Text="TEXAS HOLD'EM"
-                       FontSize="34"
-                       FontWeight="Bold"
-                       Foreground="#F3D38A"
-                       HorizontalAlignment="Center"
-                       Margin="0,4,0,10">
-                <TextBlock.Effect>
-                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.75" Color="Black"/>
-                </TextBlock.Effect>
-            </TextBlock>
+            <Grid Grid.Row="0" Margin="0,4,0,10">
+                <TextBlock Text="TEXAS HOLD'EM"
+                           FontSize="34"
+                           FontWeight="Bold"
+                           Foreground="#F3D38A"
+                           HorizontalAlignment="Center">
+                    <TextBlock.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.75" Color="Black"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                <Button x:Name="MuteButton"
+                        Content="SOUND ON"
+                        Style="{StaticResource ActionButton}"
+                        Background="#2F3540"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Padding="12,8"
+                        FontSize="12"
+                        Click="Mute_Click"/>
+            </Grid>
 
             <!-- Scales down if needed so cards never cover the button row. -->
             <Viewbox Grid.Row="1"
@@ -126,6 +135,14 @@
                                     <TextBlock x:Name="OppChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel x:Name="OpponentPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                <TextBlock x:Name="OppActionText"
+                                           Text=""
+                                           FontSize="12"
+                                           FontWeight="Bold"
+                                           Foreground="#F3D38A"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,6,0,0"
+                                           MinHeight="16"/>
                             </StackPanel>
                         </Border>
 
@@ -161,6 +178,14 @@
                                     <TextBlock x:Name="YouChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="YouActionText"
+                                           Text=""
+                                           FontSize="12"
+                                           FontWeight="Bold"
+                                           Foreground="#F3D38A"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,6,0,0"
+                                           MinHeight="16"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

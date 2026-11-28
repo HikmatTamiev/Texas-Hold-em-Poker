@@ -42,6 +42,7 @@ public partial class MainWindow : Window
     private Dictionary<string, BitmapImage> cardPictures = new Dictionary<string, BitmapImage>();
     private OpponentStyle opponentStyle = OpponentStyle.Normal;
     private bool isAllInRunout;
+    private int lastShownPot = -1;
 
     public MainWindow()
     {
@@ -52,6 +53,21 @@ public partial class MainWindow : Window
         opponent = new Player("Opponent", 1000);
         StartHand();
         GameSounds.StartAmbiance();
+        UpdateMuteButton();
+    }
+
+    private void Mute_Click(object sender, RoutedEventArgs e)
+    {
+        GameSounds.ToggleMute();
+        UpdateMuteButton();
+    }
+
+    private void UpdateMuteButton()
+    {
+        MuteButton.Content = GameSounds.IsMuted ? "SOUND OFF" : "SOUND ON";
+        MuteButton.Background = GameSounds.IsMuted
+            ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5A3A3A"))
+            : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2F3540"));
     }
 
     private void NewHand_Click(object sender, RoutedEventArgs e)
@@ -99,6 +115,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        ClearSeatActions();
         HolePanel.Children.Clear();
         BoardPanel.Children.Clear();
         OpponentPanel.Children.Clear();
@@ -155,6 +172,8 @@ public partial class MainWindow : Window
         hasActed = true;
         facingBet = false;
         facingBetAmount = 0;
+        SetYourAction("FOLD");
+        SetOppAction("WINS");
         ShowChips();
         HandNameText.Text = "You folded. Opponent wins " + won + ".";
         UpdateButtons();
@@ -168,6 +187,7 @@ public partial class MainWindow : Window
         }
 
         GameSounds.Click();
+        SetYourAction("CHECK");
 
         if (!youAreSmallBlindThisHand)
         {
@@ -201,6 +221,7 @@ public partial class MainWindow : Window
 
         facingBet = false;
         facingBetAmount = 0;
+        SetYourAction(paid < bet || you.Chips == 0 ? "ALL IN" : "CALL");
         ShowChips();
 
         if (paid < bet)
@@ -318,6 +339,7 @@ public partial class MainWindow : Window
         facingBet = false;
         facingBetAmount = 0;
         bool youAreAllIn = you.Chips == 0;
+        SetYourAction(youAreAllIn ? "ALL IN" : "RAISE");
 
         if (OpponentChoosesFold(youAreAllIn))
         {
@@ -326,6 +348,7 @@ public partial class MainWindow : Window
             pot = 0;
             street = 3;
             hasActed = true;
+            SetOppAction("FOLD");
             RevealOpponentCards();
             ShowChips();
             if (youAreAllIn)
@@ -352,6 +375,7 @@ public partial class MainWindow : Window
         }
 
         hasActed = true;
+        SetOppAction(opponent.Chips == 0 ? "ALL IN" : "CALL");
         ShowChips();
         if (youAreAllIn)
         {
@@ -453,6 +477,7 @@ public partial class MainWindow : Window
         you.Pay(bet);
         pot = pot + bet;
         bool youAreAllIn = you.Chips == 0;
+        SetYourAction(youAreAllIn ? "ALL IN" : "BET");
 
         if (OpponentChoosesFold(youAreAllIn))
         {
@@ -462,6 +487,7 @@ public partial class MainWindow : Window
             street = 3;
             hasActed = true;
             facingBet = false;
+            SetOppAction("FOLD");
             RevealOpponentCards();
             ShowChips();
             if (youAreAllIn)
@@ -488,6 +514,7 @@ public partial class MainWindow : Window
         }
 
         hasActed = true;
+        SetOppAction(opponent.Chips == 0 ? "ALL IN" : "CALL");
         ShowChips();
         if (youAreAllIn)
         {
@@ -606,6 +633,7 @@ public partial class MainWindow : Window
         hasActed = false;
         facingBet = false;
         facingBetAmount = 0;
+        ClearSeatActions();
 
         if (isAllInRunout)
         {
@@ -638,6 +666,8 @@ public partial class MainWindow : Window
             pot = 0;
             street = 3;
             hasActed = true;
+            SetOppAction("FOLD");
+            SetYourAction("WINS");
             RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "Opponent folds the small blind. You win " + won + ".";
@@ -667,6 +697,7 @@ public partial class MainWindow : Window
             }
 
             hasActed = false;
+            SetOppAction(opponent.Chips == 0 ? "ALL IN" : "RAISE");
             ShowChips();
             if (opponent.Chips == 0)
             {
@@ -683,6 +714,7 @@ public partial class MainWindow : Window
 
         int called = opponent.PayUpTo(complete);
         pot = pot + called;
+        SetOppAction(opponent.Chips == 0 ? "ALL IN" : "CALL");
         ShowChips();
 
         if (opponent.Chips == 0)
@@ -706,6 +738,7 @@ public partial class MainWindow : Window
             facingBet = true;
             facingBetAmount = paid;
             hasActed = false;
+            SetOppAction(wasAllIn ? "ALL IN" : "RAISE");
             ShowChips();
             if (wasAllIn)
             {
@@ -721,6 +754,7 @@ public partial class MainWindow : Window
         }
 
         hasActed = true;
+        SetOppAction("CHECK");
         HandNameText.Text = HandNameText.Text + " Opponent checks. Deal the flop.";
         UpdateButtons();
     }
@@ -733,6 +767,7 @@ public partial class MainWindow : Window
             facingBet = true;
             facingBetAmount = paid;
             hasActed = false;
+            SetOppAction(wasAllIn ? "ALL IN" : "BET");
             ShowChips();
             if (wasAllIn)
             {
@@ -748,6 +783,7 @@ public partial class MainWindow : Window
         }
 
         hasActed = true;
+        SetOppAction("CHECK");
         HandNameText.Text = "You checked. Opponent checks. Deal the next cards.";
         UpdateButtons();
     }
@@ -760,6 +796,7 @@ public partial class MainWindow : Window
             facingBet = true;
             facingBetAmount = paid;
             hasActed = false;
+            SetOppAction(wasAllIn ? "ALL IN" : "BET");
             ShowChips();
             if (wasAllIn)
             {
@@ -774,6 +811,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        SetOppAction("CHECK");
         HandNameText.Text = dealtText + " Opponent checks. Check or bet.";
         UpdateButtons();
     }
@@ -849,6 +887,8 @@ public partial class MainWindow : Window
             int won = pot;
             you.Receive(won);
             pot = 0;
+            SetYourAction("WINS");
+            SetOppAction("");
             ShowChips();
             HandNameText.Text = "You win " + won + " with " + evaluator.Describe(yourHand.Category) + ".";
         }
@@ -857,6 +897,8 @@ public partial class MainWindow : Window
             int won = pot;
             opponent.Receive(won);
             pot = 0;
+            SetOppAction("WINS");
+            SetYourAction("");
             ShowChips();
             HandNameText.Text = "Opponent wins " + won + " with " + evaluator.Describe(opponentHand.Category) + ".";
         }
@@ -867,6 +909,8 @@ public partial class MainWindow : Window
             opponent.Receive(share);
             you.Receive(yourShare);
             pot = 0;
+            SetYourAction("SPLIT");
+            SetOppAction("SPLIT");
             ShowChips();
             HandNameText.Text = "Both have " + evaluator.Describe(yourHand.Category) + ". The pot is split.";
         }
@@ -1292,6 +1336,22 @@ public partial class MainWindow : Window
         scale.BeginAnimation(ScaleTransform.ScaleXProperty, close);
     }
 
+    private void ClearSeatActions()
+    {
+        YouActionText.Text = "";
+        OppActionText.Text = "";
+    }
+
+    private void SetYourAction(string action)
+    {
+        YouActionText.Text = action;
+    }
+
+    private void SetOppAction(string action)
+    {
+        OppActionText.Text = action;
+    }
+
     private void ShowChips()
     {
         string yourMark = "";
@@ -1313,6 +1373,23 @@ public partial class MainWindow : Window
         YouChipsText.Text = you.Chips.ToString("N0");
         OppChipsText.Text = opponent.Chips.ToString("N0");
         PotAmountText.Text = pot.ToString("N0");
+
+        if (lastShownPot >= 0 && pot != lastShownPot)
+        {
+            DoubleAnimation pulse = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 1.18,
+                Duration = TimeSpan.FromMilliseconds(120),
+                AutoReverse = true
+            };
+            PotAmountText.RenderTransform = new ScaleTransform(1, 1);
+            PotAmountText.RenderTransformOrigin = new Point(0.5, 0.5);
+            PotAmountText.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, pulse);
+            PotAmountText.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, pulse);
+        }
+
+        lastShownPot = pot;
     }
 
     private void UpdateButtons()

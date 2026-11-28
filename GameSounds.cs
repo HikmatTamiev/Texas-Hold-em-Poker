@@ -8,6 +8,30 @@ public static class GameSounds
 {
     private static readonly Random random = new Random();
     private static MediaPlayer? ambiancePlayer;
+    private static bool muted;
+
+    public static bool IsMuted => muted;
+
+    public static void ToggleMute()
+    {
+        muted = !muted;
+
+        if (muted)
+        {
+            if (ambiancePlayer != null)
+            {
+                ambiancePlayer.Pause();
+            }
+        }
+        else if (ambiancePlayer != null)
+        {
+            ambiancePlayer.Play();
+        }
+        else
+        {
+            StartAmbiance();
+        }
+    }
 
     public static void StartAmbiance()
     {
@@ -29,10 +53,17 @@ public static class GameSounds
             }
 
             ambiancePlayer.Position = TimeSpan.Zero;
-            ambiancePlayer.Play();
+            if (!muted)
+            {
+                ambiancePlayer.Play();
+            }
         };
         ambiancePlayer.Open(new Uri(path));
-        ambiancePlayer.Play();
+
+        if (!muted)
+        {
+            ambiancePlayer.Play();
+        }
     }
 
     public static void StopAmbiance()
@@ -83,6 +114,11 @@ public static class GameSounds
 
     private static void Play(string fileName)
     {
+        if (muted)
+        {
+            return;
+        }
+
         string path = Path.Combine(AppContext.BaseDirectory, "Sounds", fileName);
 
         if (!File.Exists(path))
