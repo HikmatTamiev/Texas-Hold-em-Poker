@@ -3,82 +3,157 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TexasHoldem"
         mc:Ignorable="d"
-        Title="Texas Hold'em" Height="680" Width="860"
-        Background="#146C36">
-    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Texas Hold'em"
-                       FontSize="32"
-                       Foreground="White"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,12"/>
-            <TextBlock x:Name="ChipText"
-                       FontSize="18"
-                       Foreground="White"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,8"/>
-            <TextBlock x:Name="StatusText"
-                       FontSize="18"
-                       Foreground="#FFD966"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,10"/>
-            <TextBlock Text="The board"
-                       FontSize="18"
-                       Foreground="White"
-                       HorizontalAlignment="Center"/>
-            <StackPanel x:Name="BoardPanel"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
-                <StackPanel Width="240" Margin="0,0,36,0">
-                    <TextBlock Text="Your cards"
-                               FontSize="18"
-                               Foreground="White"
-                               HorizontalAlignment="Center"/>
-                    <StackPanel x:Name="HolePanel"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Center"/>
+        Title="Texas Hold'em" Height="820" Width="1100"
+        MinHeight="760" MinWidth="980"
+        FontFamily="Segoe UI"
+        Background="#100C09">
+    <Window.Resources>
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="18,10"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Face"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.35" Color="Black"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Face" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Face" Property="Opacity" Value="0.72"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Face" Property="Opacity" Value="0.32"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="TEXAS HOLD'EM"
+                   FontSize="22"
+                   FontWeight="Bold"
+                   Foreground="#F3D38A"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,12"/>
+
+        <Viewbox Grid.Row="1" Stretch="Uniform">
+            <Grid Width="1000" Height="700">
+                <Ellipse Stroke="#6B4A2A" StrokeThickness="16">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#24964E" Offset="0"/>
+                            <GradientStop Color="#146C36" Offset="0.62"/>
+                            <GradientStop Color="#0B4422" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <StackPanel Width="860" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border Background="#1A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center" Opacity="0.94">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="OPPONENT" FontSize="13" FontWeight="Bold" Foreground="#C8B48A" VerticalAlignment="Center"/>
+                                <Border Background="#F3D38A" CornerRadius="8" Padding="8,2" Margin="10,0,0,0">
+                                    <TextBlock x:Name="OppBlindText" Text="BB" FontSize="12" FontWeight="Bold" Foreground="#1A120C"/>
+                                </Border>
+                                <TextBlock x:Name="OppChipsText" Text="1000" FontSize="16" FontWeight="Bold" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                <StackPanel x:Name="OppChipStack" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel x:Name="OpponentPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel HorizontalAlignment="Center" Margin="0,16,0,16">
+                        <Border Background="#102E1A" CornerRadius="18" Padding="16,6" HorizontalAlignment="Center" Margin="0,0,0,8">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="POT" FontSize="12" FontWeight="Bold" Foreground="#F3D38A" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="PotAmountText" Text="30" FontSize="20" FontWeight="Bold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                <StackPanel x:Name="PotChipStack" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="134"/>
+                    </StackPanel>
+
+                    <Border Background="#1A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center" Opacity="0.94">
+                        <StackPanel>
+                            <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+                                <TextBlock Text="YOU" FontSize="13" FontWeight="Bold" Foreground="#C8B48A" VerticalAlignment="Center"/>
+                                <Border Background="#F3D38A" CornerRadius="8" Padding="8,2" Margin="10,0,0,0">
+                                    <TextBlock x:Name="YouBlindText" Text="SB" FontSize="12" FontWeight="Bold" Foreground="#1A120C"/>
+                                </Border>
+                                <TextBlock x:Name="YouChipsText" Text="1000" FontSize="16" FontWeight="Bold" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                <StackPanel x:Name="YouChipStack" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-                <StackPanel Width="240" Margin="36,0,0,0">
-                    <TextBlock Text="Opponent"
-                               FontSize="18"
-                               Foreground="White"
-                               HorizontalAlignment="Center"/>
-                    <StackPanel x:Name="OpponentPanel"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Center"/>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
-                <Button x:Name="FoldButton" Content="Fold" Margin="6" Padding="14,6" Click="Fold_Click"/>
-                <Button x:Name="CheckButton" Content="Check" Margin="6" Padding="14,6" Click="Check_Click"/>
-                <Button x:Name="CallButton" Content="Call" Margin="6" Padding="14,6" Click="Call_Click"/>
-                <Button x:Name="RaiseButton" Content="Raise 20" Margin="6" Padding="14,6" Click="Raise_Click"/>
-                <Button x:Name="BetButton" Content="Bet 20" Margin="6" Padding="14,6" Click="Bet_Click"/>
-                <Button x:Name="DealNextButton" Content="Deal next" Margin="6" Padding="14,6" Click="DealNext_Click"/>
-                <Button x:Name="NewHandButton" Content="New hand" Margin="6" Padding="14,6" Click="NewHand_Click"/>
-                <Button x:Name="ResetStacksButton" Content="Reset stacks" Margin="6" Padding="14,6" Click="ResetStacks_Click"/>
-            </StackPanel>
-            <TextBlock x:Name="HandNameText"
-                       FontSize="22"
-                       Foreground="White"
-                       TextAlignment="Center"
-                       TextWrapping="Wrap"
-                       MaxWidth="760"
-                       HorizontalAlignment="Center"
-                       Margin="0,14,0,0"/>
-            <TextBlock x:Name="HistoryText"
-                       FontSize="16"
-                       Foreground="#C8E6C9"
-                       TextAlignment="Center"
-                       TextWrapping="Wrap"
-                       MaxWidth="760"
-                       HorizontalAlignment="Center"
-                       Margin="0,8,0,0"/>
+            </Grid>
+        </Viewbox>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+            <Button x:Name="FoldButton" Content="Fold" Style="{StaticResource ActionButton}" Background="#8C2F2F" Click="Fold_Click"/>
+            <Button x:Name="CheckButton" Content="Check" Style="{StaticResource ActionButton}" Background="#2C6B5A" Click="Check_Click"/>
+            <Button x:Name="CallButton" Content="Call" Style="{StaticResource ActionButton}" Background="#1E7A45" Click="Call_Click"/>
+            <Button x:Name="RaiseButton" Content="Raise 20" Style="{StaticResource ActionButton}" Background="#C47B12" Click="Raise_Click"/>
+            <Button x:Name="BetButton" Content="Bet 20" Style="{StaticResource ActionButton}" Background="#A67C2D" Click="Bet_Click"/>
+            <Button x:Name="DealNextButton" Content="Deal next" Style="{StaticResource ActionButton}" Background="#1E4F86" Click="DealNext_Click"/>
+            <Button x:Name="NewHandButton" Content="New hand" Style="{StaticResource ActionButton}" Background="#3E4550" Click="NewHand_Click"/>
+            <Button x:Name="ResetStacksButton" Content="Reset stacks" Style="{StaticResource ActionButton}" Background="#4A3B32" Click="ResetStacks_Click"/>
         </StackPanel>
+
+        <TextBlock x:Name="StatusText"
+                   Grid.Row="3"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Foreground="#F3D38A"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Margin="0,12,0,0"/>
+        <TextBlock x:Name="HandNameText"
+                   Grid.Row="3"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   Foreground="White"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   MaxWidth="980"
+                   HorizontalAlignment="Center"
+                   Margin="0,36,0,0"/>
+        <TextBlock x:Name="HistoryText"
+                   Grid.Row="4"
+                   FontSize="14"
+                   Foreground="#B7C4B8"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   MaxWidth="980"
+                   HorizontalAlignment="Center"
+                   Margin="0,6,0,0"/>
     </Grid>
 </Window>

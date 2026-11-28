@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -30,6 +31,7 @@ public partial class MainWindow : Window
     private bool youPostSmallBlind = true;
     private bool youAreSmallBlindThisHand = true;
     private Random random = new Random();
+    private Dictionary<string, BitmapImage> cardPictures = new Dictionary<string, BitmapImage>();
 
     public MainWindow()
     {
@@ -561,9 +563,52 @@ public partial class MainWindow : Window
             opponentMark = " (SB)";
         }
 
-        ChipText.Text = you.Name + yourMark + ": " + you.Chips + " chips"
-            + "\n" + opponent.Name + opponentMark + ": " + opponent.Chips + " chips"
-            + "\nPot: " + pot;
+        YouBlindText.Text = yourMark.Trim(' ', '(', ')');
+        OppBlindText.Text = opponentMark.Trim(' ', '(', ')');
+        YouChipsText.Text = you.Chips.ToString();
+        OppChipsText.Text = opponent.Chips.ToString();
+        PotAmountText.Text = pot.ToString();
+        DrawChipStack(YouChipStack, you.Chips);
+        DrawChipStack(OppChipStack, opponent.Chips);
+        DrawChipStack(PotChipStack, pot);
+    }
+
+    private void DrawChipStack(StackPanel panel, int amount)
+    {
+        panel.Children.Clear();
+
+        int shown = amount / 100;
+        if (amount > 0 && shown < 1)
+        {
+            shown = 1;
+        }
+
+        if (shown > 8)
+        {
+            shown = 8;
+        }
+
+        Color[] colors =
+        {
+            Color.FromRgb(196, 58, 58),
+            Color.FromRgb(47, 111, 196),
+            Color.FromRgb(46, 158, 90),
+            Color.FromRgb(232, 232, 232),
+            Color.FromRgb(92, 46, 140),
+            Color.FromRgb(196, 123, 18)
+        };
+
+        for (int i = 0; i < shown; i++)
+        {
+            Ellipse chip = new Ellipse();
+            chip.Width = 18;
+            chip.Height = 18;
+            chip.Margin = new Thickness(2, 0, 2, 0);
+            chip.Fill = new SolidColorBrush(colors[i % colors.Length]);
+            chip.Stroke = new SolidColorBrush(Color.FromRgb(243, 211, 138));
+            chip.StrokeThickness = 2;
+            panel.Children.Add(chip);
+        }
     }
 
     private void UpdateButtons()
@@ -572,14 +617,19 @@ public partial class MainWindow : Window
         bool canOpenAction = handOpen && !hasActed && !facingBet;
         bool canAnswerBet = handOpen && facingBet;
 
-        FoldButton.IsEnabled = handOpen;
-        CheckButton.IsEnabled = canOpenAction;
-        BetButton.IsEnabled = canOpenAction && you.Chips > 0;
-        CallButton.IsEnabled = canAnswerBet;
-        RaiseButton.IsEnabled = canAnswerBet && you.Chips > facingBetAmount;
-        DealNextButton.IsEnabled = handOpen && hasActed && !facingBet;
-        NewHandButton.IsEnabled = true;
-        ResetStacksButton.IsEnabled = true;
+        bool canBet = canOpenAction && you.Chips > 0;
+        bool canRaise = canAnswerBet && you.Chips > facingBetAmount;
+        bool canDeal = handOpen && hasActed && !facingBet;
+        bool handOver = !handOpen;
+
+        ShowButton(FoldButton, handOpen);
+        ShowButton(CheckButton, canOpenAction);
+        ShowButton(BetButton, canBet);
+        ShowButton(CallButton, canAnswerBet);
+        ShowButton(RaiseButton, canRaise);
+        ShowButton(DealNextButton, canDeal);
+        ShowButton(NewHandButton, handOver);
+        ShowButton(ResetStacksButton, handOver);
 
         if (facingBet)
         {
@@ -591,6 +641,20 @@ public partial class MainWindow : Window
         }
 
         UpdateStatus();
+    }
+
+    private void ShowButton(Button button, bool show)
+    {
+        if (show)
+        {
+            button.Visibility = Visibility.Visible;
+            button.IsEnabled = true;
+        }
+        else
+        {
+            button.Visibility = Visibility.Collapsed;
+            button.IsEnabled = false;
+        }
     }
 
     private void UpdateStatus()
@@ -618,100 +682,98 @@ public partial class MainWindow : Window
 
     private Border CreateCardBack()
     {
-        TextBlock label = new TextBlock();
-        label.Text = "?";
-        label.FontSize = 36;
-        label.Foreground = Brushes.White;
-        label.HorizontalAlignment = HorizontalAlignment.Center;
-        label.VerticalAlignment = VerticalAlignment.Center;
-
         Border back = new Border();
-        back.Width = 72;
-        back.Height = 104;
-        back.Margin = new Thickness(4);
-        back.Background = new SolidColorBrush(Color.FromRgb(20, 60, 140));
-        back.BorderBrush = Brushes.White;
-        back.BorderThickness = new Thickness(2);
+        back.Width = 86;
+        back.Height = 124;
+        back.Margin = new Thickness(5);
         back.CornerRadius = new CornerRadius(8);
-        back.Child = label;
+        back.Background = new SolidColorBrush(Color.FromRgb(18, 52, 122));
+        back.BorderBrush = new SolidColorBrush(Color.FromRgb(243, 211, 138));
+        back.BorderThickness = new Thickness(3);
+        back.Effect = CardShadow();
+
+        TextBlock monogram = new TextBlock();
+        monogram.Text = "♠";
+        monogram.FontSize = 32;
+        monogram.Foreground = new SolidColorBrush(Color.FromRgb(243, 211, 138));
+        monogram.HorizontalAlignment = HorizontalAlignment.Center;
+        monogram.VerticalAlignment = VerticalAlignment.Center;
+        back.Child = monogram;
 
         return back;
     }
 
+    private DropShadowEffect CardShadow()
+    {
+        DropShadowEffect shadow = new DropShadowEffect();
+        shadow.BlurRadius = 12;
+        shadow.ShadowDepth = 3;
+        shadow.Opacity = 0.45;
+        shadow.Color = Colors.Black;
+        return shadow;
+    }
+
     private Border CreateCardFace(Card card)
     {
-        TextBlock label = new TextBlock();
-        label.Text = RankLabel(card.Rank) + "\n" + SuitSymbol(card.Suit);
-        label.FontSize = 22;
-        label.Foreground = SuitBrush(card.Suit);
-        label.HorizontalAlignment = HorizontalAlignment.Center;
-        label.VerticalAlignment = VerticalAlignment.Center;
+        Image picture = new Image();
+        picture.Source = LoadCardPicture(CardFileName(card));
+        picture.Stretch = Stretch.Uniform;
 
         Border face = new Border();
-        face.Width = 72;
-        face.Height = 104;
-        face.Margin = new Thickness(4);
+        face.Width = 86;
+        face.Height = 124;
+        face.Margin = new Thickness(5);
+        face.CornerRadius = new CornerRadius(6);
         face.Background = Brushes.White;
-        face.BorderBrush = Brushes.Black;
-        face.BorderThickness = new Thickness(2);
-        face.CornerRadius = new CornerRadius(8);
-        face.Child = label;
+        face.Effect = CardShadow();
+        face.Child = picture;
 
         return face;
     }
 
-    private string RankLabel(Rank rank)
+    private BitmapImage LoadCardPicture(string fileName)
     {
-        if (rank == Rank.Ace)
+        if (cardPictures.ContainsKey(fileName))
         {
-            return "A";
+            return cardPictures[fileName];
         }
 
-        if (rank == Rank.King)
-        {
-            return "K";
-        }
-
-        if (rank == Rank.Queen)
-        {
-            return "Q";
-        }
-
-        if (rank == Rank.Jack)
-        {
-            return "J";
-        }
-
-        return ((int)rank).ToString();
+        BitmapImage picture = new BitmapImage();
+        picture.BeginInit();
+        picture.UriSource = new Uri("pack://application:,,,/Images/Cards/" + fileName, UriKind.Absolute);
+        picture.CacheOption = BitmapCacheOption.OnLoad;
+        picture.EndInit();
+        picture.Freeze();
+        cardPictures[fileName] = picture;
+        return picture;
     }
 
-    private string SuitSymbol(Suit suit)
+    private string CardFileName(Card card)
     {
-        if (suit == Suit.Clubs)
+        string rankName;
+
+        if (card.Rank == Rank.Ace)
         {
-            return "♣";
+            rankName = "ace";
+        }
+        else if (card.Rank == Rank.King)
+        {
+            rankName = "king";
+        }
+        else if (card.Rank == Rank.Queen)
+        {
+            rankName = "queen";
+        }
+        else if (card.Rank == Rank.Jack)
+        {
+            rankName = "jack";
+        }
+        else
+        {
+            rankName = ((int)card.Rank).ToString();
         }
 
-        if (suit == Suit.Diamonds)
-        {
-            return "♦";
-        }
-
-        if (suit == Suit.Hearts)
-        {
-            return "♥";
-        }
-
-        return "♠";
-    }
-
-    private Brush SuitBrush(Suit suit)
-    {
-        if (suit == Suit.Hearts || suit == Suit.Diamonds)
-        {
-            return Brushes.Red;
-        }
-
-        return Brushes.Black;
+        string suitName = card.Suit.ToString().ToLower();
+        return rankName + "_of_" + suitName + ".png";
     }
 }
