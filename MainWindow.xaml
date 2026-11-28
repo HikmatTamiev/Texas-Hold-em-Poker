@@ -51,7 +51,6 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0"
@@ -128,14 +127,6 @@
             <Button x:Name="ResetStacksButton" Content="Reset stacks" Style="{StaticResource ActionButton}" Background="#4A3B32" Click="ResetStacks_Click"/>
         </StackPanel>
 
-        <TextBlock x:Name="StatusText"
-                   Grid.Row="3"
-                   FontSize="16"
-                   FontWeight="SemiBold"
-                   Foreground="#F3D38A"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Margin="0,12,0,0"/>
         <TextBlock x:Name="HandNameText"
                    Grid.Row="3"
                    FontSize="18"
@@ -145,15 +136,6 @@
                    TextWrapping="Wrap"
                    MaxWidth="980"
                    HorizontalAlignment="Center"
-                   Margin="0,36,0,0"/>
-        <TextBlock x:Name="HistoryText"
-                   Grid.Row="4"
-                   FontSize="14"
-                   Foreground="#B7C4B8"
-                   TextAlignment="Center"
-                   TextWrapping="Wrap"
-                   MaxWidth="980"
-                   HorizontalAlignment="Center"
-                   Margin="0,6,0,0"/>
+                   Margin="0,14,0,0"/>
     </Grid>
 </Window>

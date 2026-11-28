@@ -48,7 +48,6 @@ public partial class MainWindow : Window
         you = new Player("You", 1000);
         opponent = new Player("Opponent", 1000);
         StartHand();
-        HistoryText.Text = "Last hand: none yet.";
     }
 
     private void NewHand_Click(object sender, RoutedEventArgs e)
@@ -62,7 +61,6 @@ public partial class MainWindow : Window
         opponent.SetChips(1000);
         pot = 0;
         youPostSmallBlind = true;
-        HistoryText.Text = "Last hand: stacks reset to 1000.";
         StartHand();
         HandNameText.Text = "Stacks reset to 1000. " + HandNameText.Text;
     }
@@ -140,7 +138,6 @@ public partial class MainWindow : Window
         facingBetAmount = 0;
         ShowChips();
         HandNameText.Text = "You folded. Opponent wins " + won + ".";
-        RecordHistory("Opponent won " + won + " chips after you folded.");
         UpdateButtons();
     }
 
@@ -257,7 +254,6 @@ public partial class MainWindow : Window
             RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You raised. Opponent folds. You win " + won + ".";
-            RecordHistory("You won " + won + " chips after the opponent folded to a raise.");
             UpdateButtons();
             return;
         }
@@ -321,7 +317,6 @@ public partial class MainWindow : Window
             RevealOpponentCards();
             ShowChips();
             HandNameText.Text = "You bet " + bet + ". Opponent folds. You win " + won + ".";
-            RecordHistory("You won " + won + " chips after the opponent folded to a bet.");
             UpdateButtons();
             return;
         }
@@ -424,7 +419,6 @@ public partial class MainWindow : Window
             pot = 0;
             ShowChips();
             HandNameText.Text = "You win " + won + " with " + evaluator.Describe(yourHand.Category) + ".";
-            RecordHistory("You won " + won + " chips with " + evaluator.Describe(yourHand.Category) + ".");
         }
         else if (comparison < 0)
         {
@@ -433,7 +427,6 @@ public partial class MainWindow : Window
             pot = 0;
             ShowChips();
             HandNameText.Text = "Opponent wins " + won + " with " + evaluator.Describe(opponentHand.Category) + ".";
-            RecordHistory("Opponent won " + won + " chips with " + evaluator.Describe(opponentHand.Category) + ".");
         }
         else
         {
@@ -444,13 +437,7 @@ public partial class MainWindow : Window
             pot = 0;
             ShowChips();
             HandNameText.Text = "Both have " + evaluator.Describe(yourHand.Category) + ". The pot is split.";
-            RecordHistory("The pot was split. You took " + yourShare + ", opponent took " + share + ".");
         }
-    }
-
-    private void RecordHistory(string summary)
-    {
-        HistoryText.Text = "Last hand: " + summary;
     }
 
     private HandStrength OpponentStrength()
@@ -747,8 +734,6 @@ public partial class MainWindow : Window
         {
             CallButton.Content = "Call";
         }
-
-        UpdateStatus();
     }
 
     private void ShowButton(Button button, bool show)
@@ -763,63 +748,6 @@ public partial class MainWindow : Window
             button.Visibility = Visibility.Collapsed;
             button.IsEnabled = false;
         }
-    }
-
-    private void UpdateStatus()
-    {
-        if (street >= 3)
-        {
-            StatusText.Text = "Showdown. Hand over. Start a new hand when you are ready.";
-            return;
-        }
-
-        string streetName = StreetName();
-
-        if (facingBet)
-        {
-            StatusText.Text = streetName + ". Your turn: call, raise, or fold.";
-            return;
-        }
-
-        if (!hasActed)
-        {
-            StatusText.Text = streetName + ". Your turn: check or bet.";
-            return;
-        }
-
-        if (street == 0)
-        {
-            StatusText.Text = streetName + " finished. Deal the flop.";
-            return;
-        }
-
-        if (street == 1)
-        {
-            StatusText.Text = streetName + " finished. Deal the turn.";
-            return;
-        }
-
-        StatusText.Text = streetName + " finished. Deal the river.";
-    }
-
-    private string StreetName()
-    {
-        if (street == 0)
-        {
-            return "Preflop";
-        }
-
-        if (street == 1)
-        {
-            return "Flop";
-        }
-
-        if (street == 2)
-        {
-            return "Turn";
-        }
-
-        return "River";
     }
 
     private Border CreateCardBack()
