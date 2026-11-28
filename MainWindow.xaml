@@ -132,6 +132,7 @@
                                         <TextBlock x:Name="OppBlindText" Text="BB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
                                     </Border>
                                     <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
+                                    <Canvas x:Name="OppChipPile" Width="26" Height="20" Margin="6,0,6,0" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="OppChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel x:Name="OpponentPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0"/>
@@ -156,7 +157,8 @@
                                     Margin="0,0,0,8">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="POT" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="PotAmountText" Text="30" Style="{StaticResource ChipAmount}" FontSize="22" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                    <Canvas x:Name="PotChipPile" Width="30" Height="22" Margin="10,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="PotAmountText" Text="30" Style="{StaticResource ChipAmount}" FontSize="22" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                             <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="134"/>
@@ -175,6 +177,7 @@
                                         <TextBlock x:Name="YouBlindText" Text="SB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
                                     </Border>
                                     <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
+                                    <Canvas x:Name="YouChipPile" Width="26" Height="20" Margin="6,0,6,0" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="YouChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>

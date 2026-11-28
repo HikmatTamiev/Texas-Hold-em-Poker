@@ -43,6 +43,8 @@ public partial class MainWindow : Window
     private OpponentStyle opponentStyle = OpponentStyle.Normal;
     private bool isAllInRunout;
     private int lastShownPot = -1;
+    private bool opponentThinking;
+    private int thinkToken;
 
     public MainWindow()
     {
@@ -72,12 +74,19 @@ public partial class MainWindow : Window
 
     private void NewHand_Click(object sender, RoutedEventArgs e)
     {
+        if (opponentThinking)
+        {
+            return;
+        }
+
         GameSounds.Click();
         StartHand();
     }
 
     private void ResetStacks_Click(object sender, RoutedEventArgs e)
     {
+        thinkToken++;
+        opponentThinking = false;
         GameSounds.Click();
         you.SetChips(1000);
         opponent.SetChips(1000);
@@ -89,6 +98,8 @@ public partial class MainWindow : Window
 
     private void StartHand()
     {
+        thinkToken++;
+        opponentThinking = false;
         int smallBlind = 10;
         int bigBlind = 20;
         Player smallBlindPlayer;
@@ -154,12 +165,12 @@ public partial class MainWindow : Window
         }
 
         HandNameText.Text = blindText + " Preflop. Opponent acts first.";
-        OpponentActFirstPreflop();
+        _ = RunAfterOpponentThink(OpponentActFirstPreflop);
     }
 
     private void Fold_Click(object sender, RoutedEventArgs e)
     {
-        if (street == 3)
+        if (street == 3 || opponentThinking)
         {
             return;
         }
@@ -181,7 +192,7 @@ public partial class MainWindow : Window
 
     private void Check_Click(object sender, RoutedEventArgs e)
     {
-        if (street == 3 || hasActed || facingBet)
+        if (street == 3 || hasActed || facingBet || opponentThinking)
         {
             return;
         }
@@ -197,12 +208,12 @@ public partial class MainWindow : Window
             return;
         }
 
-        OpponentReplyToCheck();
+        _ = RunAfterOpponentThink(OpponentReplyToCheck);
     }
 
     private void Call_Click(object sender, RoutedEventArgs e)
     {
-        if (street == 3 || !facingBet)
+        if (street == 3 || !facingBet || opponentThinking)
         {
             return;
         }
@@ -245,7 +256,7 @@ public partial class MainWindow : Window
         if (street == 0 && youAreSmallBlindThisHand)
         {
             HandNameText.Text = "You called " + paid + ".";
-            OpponentBigBlindOption();
+            _ = RunAfterOpponentThink(OpponentBigBlindOption);
             return;
         }
 
@@ -309,7 +320,7 @@ public partial class MainWindow : Window
 
     private void PerformRaise(int raiseAmount)
     {
-        if (street == 3 || !facingBet)
+        if (street == 3 || !facingBet || opponentThinking)
         {
             return;
         }
@@ -340,7 +351,14 @@ public partial class MainWindow : Window
         facingBetAmount = 0;
         bool youAreAllIn = you.Chips == 0;
         SetYourAction(youAreAllIn ? "ALL IN" : "RAISE");
+        ShowChips();
 
+        int raiseForReply = raiseAmount;
+        _ = RunAfterOpponentThink(() => FinishRaiseReply(raiseForReply, youAreAllIn));
+    }
+
+    private void FinishRaiseReply(int raiseAmount, bool youAreAllIn)
+    {
         if (OpponentChoosesFold(youAreAllIn))
         {
             int won = pot;
@@ -452,7 +470,7 @@ public partial class MainWindow : Window
 
     private void PerformBet(int bet)
     {
-        if (street == 3 || hasActed || facingBet)
+        if (street == 3 || hasActed || facingBet || opponentThinking)
         {
             return;
         }
@@ -478,7 +496,14 @@ public partial class MainWindow : Window
         pot = pot + bet;
         bool youAreAllIn = you.Chips == 0;
         SetYourAction(youAreAllIn ? "ALL IN" : "BET");
+        ShowChips();
 
+        int betForReply = bet;
+        _ = RunAfterOpponentThink(() => FinishBetReply(betForReply, youAreAllIn));
+    }
+
+    private void FinishBetReply(int bet, bool youAreAllIn)
+    {
         if (OpponentChoosesFold(youAreAllIn))
         {
             int won = pot;
@@ -546,7 +571,7 @@ public partial class MainWindow : Window
     {
         HideAmountPanels();
 
-        if (street == 3 || you.Chips == 0)
+        if (street == 3 || you.Chips == 0 || opponentThinking)
         {
             return;
         }
@@ -590,7 +615,7 @@ public partial class MainWindow : Window
 
     private void DealNext_Click(object sender, RoutedEventArgs e)
     {
-        if (street == 3 || !hasActed || facingBet)
+        if (street == 3 || !hasActed || facingBet || opponentThinking)
         {
             return;
         }
@@ -646,12 +671,31 @@ public partial class MainWindow : Window
         if (!youAreSmallBlindThisHand)
         {
             HandNameText.Text = dealtText + " Opponent acts first.";
-            OpponentOpenAction(dealtText);
+            string streetText = dealtText;
+            _ = RunAfterOpponentThink(() => OpponentOpenAction(streetText));
             return;
         }
 
         HandNameText.Text = dealtText + " Check or bet.";
         UpdateButtons();
+    }
+
+    private async Task RunAfterOpponentThink(Action action)
+    {
+        int token = ++thinkToken;
+        opponentThinking = true;
+        SetOppAction("THINKING...");
+        UpdateButtons();
+
+        await Task.Delay(random.Next(650, 1400));
+
+        if (token != thinkToken)
+        {
+            return;
+        }
+
+        opponentThinking = false;
+        action();
     }
 
     private void OpponentActFirstPreflop()
@@ -1373,6 +1417,9 @@ public partial class MainWindow : Window
         YouChipsText.Text = you.Chips.ToString("N0");
         OppChipsText.Text = opponent.Chips.ToString("N0");
         PotAmountText.Text = pot.ToString("N0");
+        DrawChipPile(YouChipPile, you.Chips);
+        DrawChipPile(OppChipPile, opponent.Chips);
+        DrawChipPile(PotChipPile, pot);
 
         if (lastShownPot >= 0 && pot != lastShownPot)
         {
@@ -1392,8 +1439,82 @@ public partial class MainWindow : Window
         lastShownPot = pot;
     }
 
+    private void DrawChipPile(Canvas pile, int chips)
+    {
+        pile.Children.Clear();
+
+        if (chips <= 0)
+        {
+            return;
+        }
+
+        int count;
+        if (chips < 80)
+        {
+            count = 1;
+        }
+        else if (chips < 200)
+        {
+            count = 2;
+        }
+        else if (chips < 450)
+        {
+            count = 3;
+        }
+        else if (chips < 850)
+        {
+            count = 4;
+        }
+        else
+        {
+            count = 5;
+        }
+
+        Color[] chipColors =
+        {
+            (Color)ColorConverter.ConvertFromString("#F5F0E6"),
+            (Color)ColorConverter.ConvertFromString("#C62828"),
+            (Color)ColorConverter.ConvertFromString("#2E7D32"),
+            (Color)ColorConverter.ConvertFromString("#1565C0"),
+            (Color)ColorConverter.ConvertFromString("#212121")
+        };
+
+        for (int i = 0; i < count; i++)
+        {
+            Ellipse chip = new Ellipse
+            {
+                Width = 20,
+                Height = 7,
+                Fill = new SolidColorBrush(chipColors[i]),
+                Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D4AF37")),
+                StrokeThickness = 1.1
+            };
+            Canvas.SetLeft(chip, 3);
+            Canvas.SetBottom(chip, i * 3.2);
+            pile.Children.Add(chip);
+        }
+    }
+
     private void UpdateButtons()
     {
+        if (opponentThinking)
+        {
+            ShowButton(FoldButton, false);
+            ShowButton(CheckButton, false);
+            ShowButton(BetButton, false);
+            ShowButton(BetMenuButton, false);
+            ShowButton(CallButton, false);
+            ShowButton(RaiseButton, false);
+            ShowButton(RaiseMenuButton, false);
+            ShowButton(AllInButton, false);
+            ShowButton(DealNextButton, false);
+            ShowButton(NewHandButton, false);
+            ShowButton(ResetStacksButton, false);
+            RaiseSliderPanel.Visibility = Visibility.Collapsed;
+            BetSliderPanel.Visibility = Visibility.Collapsed;
+            return;
+        }
+
         bool handOpen = street < 3;
         bool canOpenAction = handOpen && !hasActed && !facingBet;
         bool canAnswerBet = handOpen && facingBet;
