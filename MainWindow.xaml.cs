@@ -317,8 +317,9 @@ public partial class MainWindow : Window
         pot = pot + total;
         facingBet = false;
         facingBetAmount = 0;
+        bool youAreAllIn = you.Chips == 0;
 
-        if (OpponentChoosesFold())
+        if (OpponentChoosesFold(youAreAllIn))
         {
             int won = pot;
             you.Receive(won);
@@ -327,7 +328,15 @@ public partial class MainWindow : Window
             hasActed = true;
             RevealOpponentCards();
             ShowChips();
-            HandNameText.Text = "You raised. Opponent folds. You win " + won + ".";
+            if (youAreAllIn)
+            {
+                HandNameText.Text = "You are all in. Opponent folds. You win " + won + ".";
+            }
+            else
+            {
+                HandNameText.Text = "You raised. Opponent folds. You win " + won + ".";
+            }
+
             UpdateButtons();
             return;
         }
@@ -344,7 +353,14 @@ public partial class MainWindow : Window
 
         hasActed = true;
         ShowChips();
-        HandNameText.Text = "You raised " + raiseAmount + ". Opponent calls " + opponentPaid + ".";
+        if (youAreAllIn)
+        {
+            HandNameText.Text = "You are all in. Opponent calls " + opponentPaid + ".";
+        }
+        else
+        {
+            HandNameText.Text = "You raised " + raiseAmount + ". Opponent calls " + opponentPaid + ".";
+        }
 
         if (you.Chips == 0 || opponent.Chips == 0)
         {
@@ -436,8 +452,9 @@ public partial class MainWindow : Window
         GameSounds.Chips();
         you.Pay(bet);
         pot = pot + bet;
+        bool youAreAllIn = you.Chips == 0;
 
-        if (OpponentChoosesFold())
+        if (OpponentChoosesFold(youAreAllIn))
         {
             int won = pot;
             you.Receive(won);
@@ -447,7 +464,15 @@ public partial class MainWindow : Window
             facingBet = false;
             RevealOpponentCards();
             ShowChips();
-            HandNameText.Text = "You bet " + bet + ". Opponent folds. You win " + won + ".";
+            if (youAreAllIn)
+            {
+                HandNameText.Text = "You are all in. Opponent folds. You win " + won + ".";
+            }
+            else
+            {
+                HandNameText.Text = "You bet " + bet + ". Opponent folds. You win " + won + ".";
+            }
+
             UpdateButtons();
             return;
         }
@@ -464,7 +489,14 @@ public partial class MainWindow : Window
 
         hasActed = true;
         ShowChips();
-        HandNameText.Text = "You bet " + bet + ". Opponent calls " + opponentPaid + ".";
+        if (youAreAllIn)
+        {
+            HandNameText.Text = "You are all in. Opponent calls " + opponentPaid + ".";
+        }
+        else
+        {
+            HandNameText.Text = "You bet " + bet + ". Opponent calls " + opponentPaid + ".";
+        }
 
         if (you.Chips == 0 || opponent.Chips == 0)
         {
@@ -926,9 +958,63 @@ public partial class MainWindow : Window
         return Chance(bluffChance);
     }
 
-    private bool OpponentChoosesFold()
+    private bool OpponentChoosesFold(bool facingYourAllIn = false)
     {
         int power = OpponentPower();
+
+        if (facingYourAllIn)
+        {
+            // Strong hands almost never fold to an all-in.
+            if (power >= 3)
+            {
+                return Chance(5);
+            }
+
+            // A pair still calls most of the time, but can get scared.
+            if (power == 2)
+            {
+                int pairFoldChance = 20;
+                if (opponentStyle == OpponentStyle.Tight)
+                {
+                    pairFoldChance = 30;
+                }
+                else if (opponentStyle == OpponentStyle.Aggressive)
+                {
+                    pairFoldChance = 12;
+                }
+
+                return Chance(pairFoldChance);
+            }
+
+            // Ace/king high often folds, but sometimes holds on.
+            if (power == 1)
+            {
+                int mediumFoldChance = 58;
+                if (opponentStyle == OpponentStyle.Tight)
+                {
+                    mediumFoldChance = 70;
+                }
+                else if (opponentStyle == OpponentStyle.Aggressive)
+                {
+                    mediumFoldChance = 45;
+                }
+
+                return Chance(mediumFoldChance);
+            }
+
+            // Weak hands usually fold, but can still call as a bluff/hero call.
+            int weakAllInFoldChance = 84;
+            if (opponentStyle == OpponentStyle.Tight)
+            {
+                weakAllInFoldChance = 92;
+            }
+            else if (opponentStyle == OpponentStyle.Aggressive)
+            {
+                weakAllInFoldChance = 72;
+            }
+
+            return Chance(weakAllInFoldChance);
+        }
 
         if (power >= 2)
         {
