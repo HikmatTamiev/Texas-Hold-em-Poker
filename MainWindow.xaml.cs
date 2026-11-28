@@ -645,9 +645,19 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (opponent.Chips >= complete + raiseExtra && OpponentChoosesBet(complete + raiseExtra))
+        if (opponent.Chips > complete && OpponentChoosesBet(Math.Min(complete + raiseExtra, opponent.Chips)))
         {
-            int paid = opponent.PayUpTo(complete + raiseExtra);
+            int raiseTotal = complete + raiseExtra;
+            if (opponent.Chips > raiseTotal && OpponentChoosesAllIn())
+            {
+                raiseTotal = opponent.Chips;
+            }
+            else if (opponent.Chips < raiseTotal)
+            {
+                raiseTotal = opponent.Chips;
+            }
+
+            int paid = opponent.PayUpTo(raiseTotal);
             pot = pot + paid;
             facingBet = true;
             facingBetAmount = 10 + paid - 20;
@@ -658,7 +668,15 @@ public partial class MainWindow : Window
 
             hasActed = false;
             ShowChips();
-            HandNameText.Text = "Opponent raises. Call " + facingBetAmount + ", raise, or fold.";
+            if (opponent.Chips == 0)
+            {
+                HandNameText.Text = "Opponent is all in. Call " + facingBetAmount + " or fold.";
+            }
+            else
+            {
+                HandNameText.Text = "Opponent raises. Call " + facingBetAmount + ", raise, or fold.";
+            }
+
             UpdateButtons();
             return;
         }
@@ -682,22 +700,22 @@ public partial class MainWindow : Window
 
     private void OpponentBigBlindOption()
     {
-        int bet = 20;
-
-        if (opponent.Chips < bet)
+        if (OpponentTryOpenBet(out int paid, out bool wasAllIn))
         {
-            bet = opponent.Chips;
-        }
-
-        if (bet > 0 && OpponentChoosesBet(bet))
-        {
-            int paid = opponent.PayUpTo(bet);
             pot = pot + paid;
             facingBet = true;
             facingBetAmount = paid;
             hasActed = false;
             ShowChips();
-            HandNameText.Text = HandNameText.Text + " Opponent raises " + paid + ". Call, raise, or fold.";
+            if (wasAllIn)
+            {
+                HandNameText.Text = HandNameText.Text + " Opponent is all in for " + paid + ". Call or fold.";
+            }
+            else
+            {
+                HandNameText.Text = HandNameText.Text + " Opponent raises " + paid + ". Call, raise, or fold.";
+            }
+
             UpdateButtons();
             return;
         }
@@ -709,22 +727,22 @@ public partial class MainWindow : Window
 
     private void OpponentReplyToCheck()
     {
-        int bet = 20;
-
-        if (opponent.Chips < bet)
+        if (OpponentTryOpenBet(out int paid, out bool wasAllIn))
         {
-            bet = opponent.Chips;
-        }
-
-        if (bet > 0 && OpponentChoosesBet(bet))
-        {
-            int paid = opponent.PayUpTo(bet);
             pot = pot + paid;
             facingBet = true;
             facingBetAmount = paid;
             hasActed = false;
             ShowChips();
-            HandNameText.Text = "You checked. Opponent bets " + paid + ". Call, raise, or fold.";
+            if (wasAllIn)
+            {
+                HandNameText.Text = "You checked. Opponent is all in for " + paid + ". Call or fold.";
+            }
+            else
+            {
+                HandNameText.Text = "You checked. Opponent bets " + paid + ". Call, raise, or fold.";
+            }
+
             UpdateButtons();
             return;
         }
@@ -736,28 +754,55 @@ public partial class MainWindow : Window
 
     private void OpponentOpenAction(string dealtText)
     {
-        int bet = 20;
-
-        if (opponent.Chips < bet)
+        if (OpponentTryOpenBet(out int paid, out bool wasAllIn))
         {
-            bet = opponent.Chips;
-        }
-
-        if (bet > 0 && OpponentChoosesBet(bet))
-        {
-            int paid = opponent.PayUpTo(bet);
             pot = pot + paid;
             facingBet = true;
             facingBetAmount = paid;
             hasActed = false;
             ShowChips();
-            HandNameText.Text = dealtText + " Opponent bets " + paid + ". Call, raise, or fold.";
+            if (wasAllIn)
+            {
+                HandNameText.Text = dealtText + " Opponent is all in for " + paid + ". Call or fold.";
+            }
+            else
+            {
+                HandNameText.Text = dealtText + " Opponent bets " + paid + ". Call, raise, or fold.";
+            }
+
             UpdateButtons();
             return;
         }
 
         HandNameText.Text = dealtText + " Opponent checks. Check or bet.";
         UpdateButtons();
+    }
+
+    private bool OpponentTryOpenBet(out int paid, out bool wasAllIn)
+    {
+        paid = 0;
+        wasAllIn = false;
+
+        int openSize = 20;
+        if (opponent.Chips < openSize)
+        {
+            openSize = opponent.Chips;
+        }
+
+        if (openSize <= 0 || !OpponentChoosesBet(openSize))
+        {
+            return false;
+        }
+
+        int amount = openSize;
+        if (opponent.Chips > openSize && OpponentChoosesAllIn())
+        {
+            amount = opponent.Chips;
+        }
+
+        paid = opponent.PayUpTo(amount);
+        wasAllIn = opponent.Chips == 0;
+        return paid > 0;
     }
 
     private bool OpponentChoosesFoldBlind()
@@ -956,6 +1001,79 @@ public partial class MainWindow : Window
         }
 
         return Chance(bluffChance);
+    }
+
+    private bool OpponentChoosesAllIn()
+    {
+        if (opponent.Chips <= 20)
+        {
+            return true;
+        }
+
+        int power = OpponentPower();
+
+        if (power >= 3)
+        {
+            int valueShove = 18;
+            if (opponentStyle == OpponentStyle.Tight)
+            {
+                valueShove = 10;
+            }
+            else if (opponentStyle == OpponentStyle.Aggressive)
+            {
+                valueShove = 28;
+            }
+
+            return Chance(valueShove);
+        }
+
+        if (power == 2)
+        {
+            int pairShove = 10;
+            if (opponentStyle == OpponentStyle.Tight)
+            {
+                pairShove = 5;
+            }
+            else if (opponentStyle == OpponentStyle.Aggressive)
+            {
+                pairShove = 16;
+            }
+
+            return Chance(pairShove);
+        }
+
+        if (power == 1)
+        {
+            int pressureShove = 6;
+            if (opponentStyle == OpponentStyle.Tight)
+            {
+                pressureShove = 2;
+            }
+            else if (opponentStyle == OpponentStyle.Aggressive)
+            {
+                pressureShove = 12;
+            }
+
+            return Chance(pressureShove);
+        }
+
+        // Weak hand: rare bluff all-in, more often late and when aggressive.
+        int bluffShove = 4;
+        if (opponentStyle == OpponentStyle.Tight)
+        {
+            bluffShove = 1;
+        }
+        else if (opponentStyle == OpponentStyle.Aggressive)
+        {
+            bluffShove = 10;
+        }
+
+        if (street >= 2)
+        {
+            bluffShove = bluffShove + 3;
+        }
+
+        return Chance(bluffShove);
     }
 
     private bool OpponentChoosesFold(bool facingYourAllIn = false)
