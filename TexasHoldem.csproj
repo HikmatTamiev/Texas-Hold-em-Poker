@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Resource Include="Images\Cards\*.png" />
+    <Resource Include="Images\Cards\*.jpg" />
   </ItemGroup>
 
 </Project>

@@ -1203,7 +1203,7 @@ public partial class MainWindow : Window
     private Border CreateCardBack()
     {
         Image picture = new Image();
-        picture.Source = LoadCardPicture("card_back.png");
+        picture.Source = LoadCardPicture("card_back.jpg");
         picture.Stretch = Stretch.UniformToFill;
 
         Border back = new Border();
