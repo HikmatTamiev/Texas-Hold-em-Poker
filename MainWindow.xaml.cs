@@ -120,7 +120,7 @@ public partial class MainWindow : Window
         facingBetAmount = 0;
         opponentStyle = PickOpponentStyle();
         youPostSmallBlind = !youPostSmallBlind;
-        HandNameText.Text = blindText + " Check or bet, then deal the flop.";
+        HandNameText.Text = blindText + " Preflop. Check or bet, then deal the flop.";
         UpdateButtons();
     }
 
@@ -376,7 +376,7 @@ public partial class MainWindow : Window
             boardCards.AddRange(flop);
             ShowCards(flop, BoardPanel);
             street = 1;
-            HandNameText.Text = "Flop. Check or bet.";
+            HandNameText.Text = "Flop dealt. Check or bet.";
             UpdateButtons();
             return;
         }
@@ -387,7 +387,7 @@ public partial class MainWindow : Window
             boardCards.AddRange(turn);
             ShowCards(turn, BoardPanel);
             street = 2;
-            HandNameText.Text = "Turn. Check or bet.";
+            HandNameText.Text = "Turn dealt. Check or bet.";
             UpdateButtons();
             return;
         }
@@ -769,23 +769,57 @@ public partial class MainWindow : Window
     {
         if (street >= 3)
         {
-            StatusText.Text = "Hand over. Start a new hand when you are ready.";
+            StatusText.Text = "Showdown. Hand over. Start a new hand when you are ready.";
             return;
         }
 
+        string streetName = StreetName();
+
         if (facingBet)
         {
-            StatusText.Text = "Your turn: call, raise, or fold.";
+            StatusText.Text = streetName + ". Your turn: call, raise, or fold.";
             return;
         }
 
         if (!hasActed)
         {
-            StatusText.Text = "Your turn: check or bet.";
+            StatusText.Text = streetName + ". Your turn: check or bet.";
             return;
         }
 
-        StatusText.Text = "Street finished. Deal the next cards.";
+        if (street == 0)
+        {
+            StatusText.Text = streetName + " finished. Deal the flop.";
+            return;
+        }
+
+        if (street == 1)
+        {
+            StatusText.Text = streetName + " finished. Deal the turn.";
+            return;
+        }
+
+        StatusText.Text = streetName + " finished. Deal the river.";
+    }
+
+    private string StreetName()
+    {
+        if (street == 0)
+        {
+            return "Preflop";
+        }
+
+        if (street == 1)
+        {
+            return "Flop";
+        }
+
+        if (street == 2)
+        {
+            return "Turn";
+        }
+
+        return "River";
     }
 
     private Border CreateCardBack()
