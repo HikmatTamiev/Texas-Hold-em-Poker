@@ -12,6 +12,13 @@ using System.Windows.Shapes;
 
 namespace TexasHoldem;
 
+enum OpponentStyle
+{
+    Tight,
+    Normal,
+    Aggressive
+}
+
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
@@ -32,6 +39,7 @@ public partial class MainWindow : Window
     private bool youAreSmallBlindThisHand = true;
     private Random random = new Random();
     private Dictionary<string, BitmapImage> cardPictures = new Dictionary<string, BitmapImage>();
+    private OpponentStyle opponentStyle = OpponentStyle.Normal;
 
     public MainWindow()
     {
@@ -110,6 +118,7 @@ public partial class MainWindow : Window
         hasActed = false;
         facingBet = false;
         facingBetAmount = 0;
+        opponentStyle = PickOpponentStyle();
         youPostSmallBlind = !youPostSmallBlind;
         HandNameText.Text = blindText + " Check or bet, then deal the flop.";
         UpdateButtons();
@@ -474,6 +483,50 @@ public partial class MainWindow : Window
         return evaluator.BestHand(cards);
     }
 
+    private OpponentStyle PickOpponentStyle()
+    {
+        int roll = random.Next(100);
+
+        if (roll < 25)
+        {
+            return OpponentStyle.Tight;
+        }
+
+        if (roll < 70)
+        {
+            return OpponentStyle.Normal;
+        }
+
+        return OpponentStyle.Aggressive;
+    }
+
+    private int OpponentPower()
+    {
+        HandStrength strength = OpponentStrength();
+
+        if (strength.Category >= HandCategory.TwoPair)
+        {
+            return 3;
+        }
+
+        if (strength.Category >= HandCategory.Pair)
+        {
+            return 2;
+        }
+
+        if (strength.Kickers.Length > 0 && strength.Kickers[0] >= 13)
+        {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private bool Chance(int percent)
+    {
+        return random.Next(100) < percent;
+    }
+
     private bool OpponentChoosesBet(int bet)
     {
         if (opponent.Chips < bet)
@@ -481,36 +534,91 @@ public partial class MainWindow : Window
             return false;
         }
 
-        HandStrength strength = OpponentStrength();
+        int power = OpponentPower();
 
-        if (strength.Category >= HandCategory.Pair)
+        if (power >= 2)
         {
-            return true;
+            int trapChance = 20;
+            if (opponentStyle == OpponentStyle.Tight)
+            {
+                trapChance = 35;
+            }
+            else if (opponentStyle == OpponentStyle.Aggressive)
+            {
+                trapChance = 8;
+            }
+
+            return !Chance(trapChance);
         }
 
-        if (strength.Kickers.Length > 0 && strength.Kickers[0] >= 13)
+        if (power == 1)
         {
-            return random.Next(2) == 0;
+            int valueBetChance = 45;
+            if (opponentStyle == OpponentStyle.Tight)
+            {
+                valueBetChance = 25;
+            }
+            else if (opponentStyle == OpponentStyle.Aggressive)
+            {
+                valueBetChance = 70;
+            }
+
+            return Chance(valueBetChance);
         }
 
-        return false;
+        int bluffChance = 18;
+        if (opponentStyle == OpponentStyle.Tight)
+        {
+            bluffChance = 8;
+        }
+        else if (opponentStyle == OpponentStyle.Aggressive)
+        {
+            bluffChance = 35;
+        }
+
+        if (street >= 2)
+        {
+            bluffChance = bluffChance + 5;
+        }
+
+        return Chance(bluffChance);
     }
 
     private bool OpponentChoosesFold()
     {
-        HandStrength strength = OpponentStrength();
+        int power = OpponentPower();
 
-        if (strength.Category >= HandCategory.Pair)
+        if (power >= 2)
         {
             return false;
         }
 
-        if (strength.Kickers.Length > 0 && strength.Kickers[0] >= 12)
+        if (power == 1)
         {
-            return false;
+            int foldChance = 10;
+            if (opponentStyle == OpponentStyle.Tight)
+            {
+                foldChance = 20;
+            }
+            else if (opponentStyle == OpponentStyle.Aggressive)
+            {
+                foldChance = 5;
+            }
+
+            return Chance(foldChance);
         }
 
-        return true;
+        int weakFoldChance = 80;
+        if (opponentStyle == OpponentStyle.Tight)
+        {
+            weakFoldChance = 92;
+        }
+        else if (opponentStyle == OpponentStyle.Aggressive)
+        {
+            weakFoldChance = 60;
+        }
+
+        return Chance(weakFoldChance);
     }
 
     private List<Card> TakeCards(int count)
