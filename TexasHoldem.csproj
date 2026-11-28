@@ -12,6 +12,7 @@
     <Resource Include="Images\Cards\*.png" />
     <Resource Include="Images\Cards\*.jpg" />
     <Resource Include="Images\table_background.jpg" />
+    <Resource Include="Fonts\Cinzel.ttf" />
   </ItemGroup>
 
   <ItemGroup>

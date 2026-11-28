@@ -1106,50 +1106,9 @@ public partial class MainWindow : Window
 
         YouBlindText.Text = yourMark.Trim(' ', '(', ')');
         OppBlindText.Text = opponentMark.Trim(' ', '(', ')');
-        YouChipsText.Text = you.Chips.ToString();
-        OppChipsText.Text = opponent.Chips.ToString();
-        PotAmountText.Text = pot.ToString();
-        DrawChipStack(YouChipStack, you.Chips);
-        DrawChipStack(OppChipStack, opponent.Chips);
-        DrawChipStack(PotChipStack, pot);
-    }
-
-    private void DrawChipStack(StackPanel panel, int amount)
-    {
-        panel.Children.Clear();
-
-        int shown = amount / 100;
-        if (amount > 0 && shown < 1)
-        {
-            shown = 1;
-        }
-
-        if (shown > 8)
-        {
-            shown = 8;
-        }
-
-        Color[] colors =
-        {
-            Color.FromRgb(196, 58, 58),
-            Color.FromRgb(47, 111, 196),
-            Color.FromRgb(46, 158, 90),
-            Color.FromRgb(232, 232, 232),
-            Color.FromRgb(92, 46, 140),
-            Color.FromRgb(196, 123, 18)
-        };
-
-        for (int i = 0; i < shown; i++)
-        {
-            Ellipse chip = new Ellipse();
-            chip.Width = 18;
-            chip.Height = 18;
-            chip.Margin = new Thickness(2, 0, 2, 0);
-            chip.Fill = new SolidColorBrush(colors[i % colors.Length]);
-            chip.Stroke = new SolidColorBrush(Color.FromRgb(243, 211, 138));
-            chip.StrokeThickness = 2;
-            panel.Children.Add(chip);
-        }
+        YouChipsText.Text = you.Chips.ToString("N0");
+        OppChipsText.Text = opponent.Chips.ToString("N0");
+        PotAmountText.Text = pot.ToString("N0");
     }
 
     private void UpdateButtons()

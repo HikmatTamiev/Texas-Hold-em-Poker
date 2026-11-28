@@ -6,43 +6,65 @@
         mc:Ignorable="d"
         Title="Texas Hold'em" Height="820" Width="1100"
         MinHeight="760" MinWidth="980"
-        FontFamily="Segoe UI"
+        FontFamily="pack://application:,,,/Fonts/#Cinzel"
         Background="#0B3D24">
     <Window.Resources>
         <Style x:Key="ActionButton" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#FFF8E7"/>
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Cinzel"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="18,10"/>
-            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Padding" Value="16,11"/>
+            <Setter Property="Margin" Value="4,0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Face"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="20"
-                                Padding="{TemplateBinding Padding}">
+                        <Border x:Name="Rim"
+                                Background="#D4AF37"
+                                CornerRadius="8"
+                                Padding="1.5"
+                                SnapsToDevicePixels="True">
                             <Border.Effect>
-                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.35" Color="Black"/>
+                                <DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.45" Color="Black"/>
                             </Border.Effect>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border x:Name="Face"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="7"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Face" Property="Opacity" Value="0.88"/>
+                                <Setter TargetName="Face" Property="Opacity" Value="0.9"/>
+                                <Setter TargetName="Rim" Property="Background" Value="#F3D38A"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Face" Property="Opacity" Value="0.72"/>
+                                <Setter TargetName="Face" Property="Opacity" Value="0.75"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Face" Property="Opacity" Value="0.32"/>
+                                <Setter TargetName="Rim" Property="Opacity" Value="0.35"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <Style x:Key="SeatLabel" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Cinzel"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#E8D5A3"/>
+        </Style>
+
+        <Style x:Key="ChipAmount" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Cinzel"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#FFF4C2"/>
         </Style>
     </Window.Resources>
 
@@ -65,101 +87,128 @@
 
             <TextBlock Grid.Row="0"
                        Text="TEXAS HOLD'EM"
-                       FontSize="22"
+                       FontSize="34"
                        FontWeight="Bold"
                        Foreground="#F3D38A"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,12">
+                       Margin="0,4,0,10">
                 <TextBlock.Effect>
-                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.7" Color="Black"/>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.75" Color="Black"/>
                 </TextBlock.Effect>
             </TextBlock>
 
-            <Grid Grid.Row="1">
-                <Border HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Margin="0,0,20,20"
-                        Background="#CC102E1A"
-                        CornerRadius="14"
-                        Padding="12,10">
-                    <StackPanel>
-                        <TextBlock Text="DECK" FontSize="12" FontWeight="Bold" Foreground="#F3D38A" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                        <Canvas x:Name="DeckCanvas" Width="96" Height="136" ClipToBounds="True"/>
-                        <TextBlock x:Name="DeckCountText" Text="52" FontSize="14" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                    </StackPanel>
-                </Border>
-
-                <StackPanel Width="720" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="140,0,40,0">
-                    <Border Background="#B31A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <StackPanel Width="700">
+                    <Border Background="#C218100A"
+                            BorderBrush="#66D4AF37"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="18,12"
+                            HorizontalAlignment="Center">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="OPPONENT" FontSize="13" FontWeight="Bold" Foreground="#C8B48A" VerticalAlignment="Center"/>
-                                <Border Background="#F3D38A" CornerRadius="8" Padding="8,2" Margin="10,0,0,0">
-                                    <TextBlock x:Name="OppBlindText" Text="BB" FontSize="12" FontWeight="Bold" Foreground="#1A120C"/>
+                                <TextBlock Text="OPPONENT" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
+                                <Border Background="#F3D38A" CornerRadius="4" Padding="8,2" Margin="12,0,0,0">
+                                    <TextBlock x:Name="OppBlindText" Text="BB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
                                 </Border>
-                                <TextBlock x:Name="OppChipsText" Text="1000" FontSize="16" FontWeight="Bold" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
-                                <StackPanel x:Name="OppChipStack" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="OppChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <StackPanel x:Name="OpponentPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                            <StackPanel x:Name="OpponentPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0"/>
                         </StackPanel>
                     </Border>
 
-                    <StackPanel HorizontalAlignment="Center" Margin="0,16,0,16">
-                        <Border Background="#B3102E1A" CornerRadius="18" Padding="16,6" HorizontalAlignment="Center" Margin="0,0,0,8">
+                    <StackPanel HorizontalAlignment="Center" Margin="0,18,0,18">
+                        <Border Background="#C2102E1A"
+                                BorderBrush="#66D4AF37"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="18,8"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,10">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="POT" FontSize="12" FontWeight="Bold" Foreground="#F3D38A" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="PotAmountText" Text="30" FontSize="20" FontWeight="Bold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                                <StackPanel x:Name="PotChipStack" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="POT" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="PotAmountText" Text="30" Style="{StaticResource ChipAmount}" FontSize="22" Margin="12,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
                         <StackPanel x:Name="BoardPanel" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="134"/>
                     </StackPanel>
 
-                    <Border Background="#B31A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center">
+                    <Border Background="#C218100A"
+                            BorderBrush="#66D4AF37"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="18,12"
+                            HorizontalAlignment="Center">
                         <StackPanel>
                             <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
-                                <TextBlock Text="YOU" FontSize="13" FontWeight="Bold" Foreground="#C8B48A" VerticalAlignment="Center"/>
-                                <Border Background="#F3D38A" CornerRadius="8" Padding="8,2" Margin="10,0,0,0">
-                                    <TextBlock x:Name="YouBlindText" Text="SB" FontSize="12" FontWeight="Bold" Foreground="#1A120C"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                                <TextBlock Text="YOU" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
+                                <Border Background="#F3D38A" CornerRadius="4" Padding="8,2" Margin="12,0,0,0">
+                                    <TextBlock x:Name="YouBlindText" Text="SB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
                                 </Border>
-                                <TextBlock x:Name="YouChipsText" Text="1000" FontSize="16" FontWeight="Bold" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
-                                <StackPanel x:Name="YouChipStack" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="YouChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
                 </StackPanel>
-            </Grid>
 
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,12,0,0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="FoldButton" Content="Fold" Style="{StaticResource ActionButton}" Background="#8C2F2F" Click="Fold_Click"/>
-                    <Button x:Name="CheckButton" Content="Check" Style="{StaticResource ActionButton}" Background="#2C6B5A" Click="Check_Click"/>
-                    <Button x:Name="CallButton" Content="Call" Style="{StaticResource ActionButton}" Background="#1E7A45" Click="Call_Click"/>
-                    <StackPanel Orientation="Horizontal" Margin="5,0">
-                        <Button x:Name="RaiseButton" Content="Raise 20" Style="{StaticResource ActionButton}" Background="#C47B12" Margin="0" Click="Raise_Click"/>
-                        <Button x:Name="RaiseMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#9A5F0E" Padding="10,10" Margin="3,0,0,0" Click="RaiseMenu_Click"/>
+                <Border VerticalAlignment="Center"
+                        Margin="18,0,0,0"
+                        Background="#C2102E1A"
+                        BorderBrush="#66D4AF37"
+                        BorderThickness="1"
+                        CornerRadius="12"
+                        Padding="10,10">
+                    <StackPanel>
+                        <TextBlock Text="DECK" Style="{StaticResource SeatLabel}" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                        <Canvas x:Name="DeckCanvas" Width="96" Height="136" ClipToBounds="True"/>
+                        <TextBlock x:Name="DeckCountText" Text="52" Style="{StaticResource ChipAmount}" FontSize="15" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="5,0">
-                        <Button x:Name="BetButton" Content="Bet 20" Style="{StaticResource ActionButton}" Background="#A67C2D" Margin="0" Click="Bet_Click"/>
-                        <Button x:Name="BetMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#7E5C1F" Padding="10,10" Margin="3,0,0,0" Click="BetMenu_Click"/>
+                </Border>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,14,0,0">
+                <Border Background="#9918100A"
+                        BorderBrush="#55D4AF37"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="10,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="FoldButton" Content="FOLD" Style="{StaticResource ActionButton}" Background="#7A2424" Click="Fold_Click"/>
+                        <Button x:Name="CheckButton" Content="CHECK" Style="{StaticResource ActionButton}" Background="#1F5C4D" Click="Check_Click"/>
+                        <Button x:Name="CallButton" Content="CALL" Style="{StaticResource ActionButton}" Background="#176B3A" Click="Call_Click"/>
+                        <StackPanel Orientation="Horizontal" Margin="4,0">
+                            <Button x:Name="RaiseButton" Content="RAISE 20" Style="{StaticResource ActionButton}" Background="#A66A10" Margin="0" Click="Raise_Click"/>
+                            <Button x:Name="RaiseMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#7A4E0C" Padding="10,11" Margin="3,0,0,0" Click="RaiseMenu_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="4,0">
+                            <Button x:Name="BetButton" Content="BET 20" Style="{StaticResource ActionButton}" Background="#8B6824" Margin="0" Click="Bet_Click"/>
+                            <Button x:Name="BetMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#6A4E1A" Padding="10,11" Margin="3,0,0,0" Click="BetMenu_Click"/>
+                        </StackPanel>
+                        <Button x:Name="AllInButton" Content="ALL IN" Style="{StaticResource ActionButton}" Background="#6B1833" Click="AllIn_Click"/>
+                        <Button x:Name="DealNextButton" Content="DEAL" Style="{StaticResource ActionButton}" Background="#1A4575" Click="DealNext_Click"/>
+                        <Button x:Name="NewHandButton" Content="NEW HAND" Style="{StaticResource ActionButton}" Background="#2F3540" Click="NewHand_Click"/>
+                        <Button x:Name="ResetStacksButton" Content="RESET" Style="{StaticResource ActionButton}" Background="#3D322A" Click="ResetStacks_Click"/>
                     </StackPanel>
-                    <Button x:Name="AllInButton" Content="All in" Style="{StaticResource ActionButton}" Background="#7A1F3D" Click="AllIn_Click"/>
-                    <Button x:Name="DealNextButton" Content="Deal next" Style="{StaticResource ActionButton}" Background="#1E4F86" Click="DealNext_Click"/>
-                    <Button x:Name="NewHandButton" Content="New hand" Style="{StaticResource ActionButton}" Background="#3E4550" Click="NewHand_Click"/>
-                    <Button x:Name="ResetStacksButton" Content="Reset stacks" Style="{StaticResource ActionButton}" Background="#4A3B32" Click="ResetStacks_Click"/>
-                </StackPanel>
+                </Border>
 
                 <Border x:Name="RaiseSliderPanel"
                         Visibility="Collapsed"
-                        Background="#1A120C"
-                        CornerRadius="16"
+                        Background="#E118100A"
+                        BorderBrush="#66D4AF37"
+                        BorderThickness="1"
+                        CornerRadius="12"
                         Padding="18,12"
                         Margin="0,12,0,0"
                         HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Custom raise" Foreground="#C8B48A" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                        <TextBlock x:Name="RaiseAmountText" Text="+20" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Width="64"/>
+                        <TextBlock Text="CUSTOM RAISE" Style="{StaticResource SeatLabel}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                        <TextBlock x:Name="RaiseAmountText" Text="+20" Style="{StaticResource ChipAmount}" VerticalAlignment="Center" Width="64"/>
                         <Slider x:Name="RaiseSlider"
                                 Width="220"
                                 Minimum="20"
@@ -170,20 +219,22 @@
                                 VerticalAlignment="Center"
                                 Margin="8,0"
                                 ValueChanged="RaiseSlider_ValueChanged"/>
-                        <Button Content="Confirm" Style="{StaticResource ActionButton}" Background="#C47B12" Click="ConfirmCustomRaise_Click"/>
+                        <Button Content="CONFIRM" Style="{StaticResource ActionButton}" Background="#A66A10" Click="ConfirmCustomRaise_Click"/>
                     </StackPanel>
                 </Border>
 
                 <Border x:Name="BetSliderPanel"
                         Visibility="Collapsed"
-                        Background="#1A120C"
-                        CornerRadius="16"
+                        Background="#E118100A"
+                        BorderBrush="#66D4AF37"
+                        BorderThickness="1"
+                        CornerRadius="12"
                         Padding="18,12"
                         Margin="0,12,0,0"
                         HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Custom bet" Foreground="#C8B48A" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                        <TextBlock x:Name="BetAmountText" Text="20" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Width="64"/>
+                        <TextBlock Text="CUSTOM BET" Style="{StaticResource SeatLabel}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                        <TextBlock x:Name="BetAmountText" Text="20" Style="{StaticResource ChipAmount}" VerticalAlignment="Center" Width="64"/>
                         <Slider x:Name="BetSlider"
                                 Width="220"
                                 Minimum="20"
@@ -194,7 +245,7 @@
                                 VerticalAlignment="Center"
                                 Margin="8,0"
                                 ValueChanged="BetSlider_ValueChanged"/>
-                        <Button Content="Confirm" Style="{StaticResource ActionButton}" Background="#A67C2D" Click="ConfirmCustomBet_Click"/>
+                        <Button Content="CONFIRM" Style="{StaticResource ActionButton}" Background="#8B6824" Click="ConfirmCustomBet_Click"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -203,14 +254,14 @@
                        Grid.Row="3"
                        FontSize="18"
                        FontWeight="SemiBold"
-                       Foreground="White"
+                       Foreground="#FFF4C2"
                        TextAlignment="Center"
                        TextWrapping="Wrap"
                        MaxWidth="980"
                        HorizontalAlignment="Center"
                        Margin="0,14,0,0">
                 <TextBlock.Effect>
-                    <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.75" Color="Black"/>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.8" Color="Black"/>
                 </TextBlock.Effect>
             </TextBlock>
         </Grid>
