@@ -150,8 +150,7 @@
                             Padding="18,12"
                             HorizontalAlignment="Center">
                         <StackPanel>
-                            <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <TextBlock Text="YOU" Style="{StaticResource SeatLabel}" VerticalAlignment="Center"/>
                                 <Border Background="#F3D38A" CornerRadius="4" Padding="8,2" Margin="12,0,0,0">
                                     <TextBlock x:Name="YouBlindText" Text="SB" FontSize="11" FontWeight="Bold" Foreground="#1A120C"/>
@@ -159,6 +158,7 @@
                                 <TextBlock Text="  ·  " Foreground="#8A7A55" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="YouChipsText" Text="1,000" Style="{StaticResource ChipAmount}" VerticalAlignment="Center"/>
                             </StackPanel>
+                            <StackPanel x:Name="HolePanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -180,7 +180,7 @@
                 </Border>
             </Grid>
 
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,14,0,0">
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,18,0,0">
                 <Border Background="#9918100A"
                         BorderBrush="#55D4AF37"
                         BorderThickness="1"
