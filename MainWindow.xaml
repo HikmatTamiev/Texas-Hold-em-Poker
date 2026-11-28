@@ -97,11 +97,17 @@
                 </TextBlock.Effect>
             </TextBlock>
 
-            <StackPanel Grid.Row="1"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                <StackPanel Width="700">
+            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="130"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Empty left column balances the deck so the cards stay under the title. -->
+                <Border Grid.Column="0" Opacity="0" IsHitTestVisible="False"/>
+
+                <StackPanel Grid.Column="1" Width="700" HorizontalAlignment="Center">
                     <Border Background="#C218100A"
                             BorderBrush="#66D4AF37"
                             BorderThickness="1"
@@ -157,8 +163,10 @@
                     </Border>
                 </StackPanel>
 
-                <Border VerticalAlignment="Center"
-                        Margin="18,0,0,0"
+                <Border Grid.Column="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Margin="12,0,0,0"
                         Background="#C2102E1A"
                         BorderBrush="#66D4AF37"
                         BorderThickness="1"
@@ -170,7 +178,7 @@
                         <TextBlock x:Name="DeckCountText" Text="52" Style="{StaticResource ChipAmount}" FontSize="15" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                     </StackPanel>
                 </Border>
-            </StackPanel>
+            </Grid>
 
             <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,14,0,0">
                 <Border Background="#9918100A"
