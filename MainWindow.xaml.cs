@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -958,24 +959,89 @@ public partial class MainWindow : Window
 
     private void ShowCards(List<Card> cards, StackPanel panel)
     {
-        foreach (Card card in cards)
+        int startIndex = panel.Children.Count;
+
+        for (int i = 0; i < cards.Count; i++)
         {
-            panel.Children.Add(CreateCardFace(card));
+            Border face = CreateCardFace(cards[i]);
+            panel.Children.Add(face);
+            AnimateDealIn(face, startIndex + i);
         }
     }
 
     private void ShowCardBacks(int count, StackPanel panel)
     {
+        int startIndex = panel.Children.Count;
+
         for (int i = 0; i < count; i++)
         {
-            panel.Children.Add(CreateCardBack());
+            Border back = CreateCardBack();
+            panel.Children.Add(back);
+            AnimateDealIn(back, startIndex + i);
         }
     }
 
     private void RevealOpponentCards()
     {
         OpponentPanel.Children.Clear();
-        ShowCards(opponentHoleCards, OpponentPanel);
+
+        for (int i = 0; i < opponentHoleCards.Count; i++)
+        {
+            Border shell = CreateCardBack();
+            OpponentPanel.Children.Add(shell);
+            AnimateFlipReveal(shell, opponentHoleCards[i], i * 140);
+        }
+    }
+
+    private void AnimateDealIn(UIElement card, int index)
+    {
+        card.Opacity = 0;
+
+        TranslateTransform slide = new TranslateTransform(0, -22);
+        card.RenderTransform = slide;
+        card.RenderTransformOrigin = new Point(0.5, 0.5);
+
+        TimeSpan delay = TimeSpan.FromMilliseconds(index * 85);
+        Duration length = new Duration(TimeSpan.FromMilliseconds(300));
+
+        DoubleAnimation fade = new DoubleAnimation(0, 1, length);
+        fade.BeginTime = delay;
+        fade.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+
+        DoubleAnimation move = new DoubleAnimation(-22, 0, length);
+        move.BeginTime = delay;
+        move.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+
+        card.BeginAnimation(UIElement.OpacityProperty, fade);
+        slide.BeginAnimation(TranslateTransform.YProperty, move);
+    }
+
+    private void AnimateFlipReveal(Border shell, Card card, int delayMs)
+    {
+        shell.RenderTransformOrigin = new Point(0.5, 0.5);
+        ScaleTransform scale = new ScaleTransform(1, 1);
+        shell.RenderTransform = scale;
+
+        DoubleAnimation close = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(160)));
+        close.BeginTime = TimeSpan.FromMilliseconds(delayMs);
+        close.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn };
+
+        close.Completed += (_, _) =>
+        {
+            Border face = CreateCardFace(card);
+            shell.Background = face.Background;
+            shell.BorderBrush = face.BorderBrush;
+            shell.BorderThickness = face.BorderThickness;
+            shell.CornerRadius = face.CornerRadius;
+            shell.Child = face.Child;
+            shell.Effect = face.Effect;
+
+            DoubleAnimation open = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(180)));
+            open.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, open);
+        };
+
+        scale.BeginAnimation(ScaleTransform.ScaleXProperty, close);
     }
 
     private void ShowChips()
