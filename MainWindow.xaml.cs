@@ -1203,17 +1203,16 @@ public partial class MainWindow : Window
     private Border CreateCardBack()
     {
         Image picture = new Image();
-        picture.Source = LoadCardPicture("card_back.jpg");
-        picture.Stretch = Stretch.UniformToFill;
+        picture.Source = LoadCardPicture("cardbackimg.png");
+        picture.Stretch = Stretch.Uniform;
 
         Border back = new Border();
         back.Width = 86;
         back.Height = 124;
         back.Margin = new Thickness(5);
         back.CornerRadius = new CornerRadius(8);
-        back.Background = new SolidColorBrush(Color.FromRgb(18, 52, 122));
-        back.BorderBrush = new SolidColorBrush(Color.FromRgb(243, 211, 138));
-        back.BorderThickness = new Thickness(2);
+        back.Background = Brushes.Transparent;
+        back.BorderThickness = new Thickness(0);
         back.ClipToBounds = true;
         back.Effect = CardShadow();
         back.Child = picture;
