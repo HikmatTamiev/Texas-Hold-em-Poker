@@ -54,11 +54,13 @@ public partial class MainWindow : Window
 
     private void NewHand_Click(object sender, RoutedEventArgs e)
     {
+        GameSounds.Click();
         StartHand();
     }
 
     private void ResetStacks_Click(object sender, RoutedEventArgs e)
     {
+        GameSounds.Click();
         you.SetChips(1000);
         opponent.SetChips(1000);
         pot = 0;
@@ -143,6 +145,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        GameSounds.Fold();
         int won = pot;
         opponent.Receive(won);
         pot = 0;
@@ -162,6 +165,8 @@ public partial class MainWindow : Window
             return;
         }
 
+        GameSounds.Click();
+
         if (!youAreSmallBlindThisHand)
         {
             hasActed = true;
@@ -180,6 +185,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        GameSounds.Chips();
         int bet = facingBetAmount;
         int paid = you.PayUpTo(bet);
         pot = pot + paid;
@@ -238,6 +244,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        GameSounds.Click();
         BetSliderPanel.Visibility = Visibility.Collapsed;
 
         if (RaiseSliderPanel.Visibility == Visibility.Visible)
@@ -290,6 +297,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        GameSounds.Chips();
         int total = facingBetAmount + raiseAmount;
 
         if (you.Chips < total)
@@ -360,6 +368,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        GameSounds.Click();
         RaiseSliderPanel.Visibility = Visibility.Collapsed;
 
         if (BetSliderPanel.Visibility == Visibility.Visible)
@@ -422,6 +431,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        GameSounds.Chips();
         you.Pay(bet);
         pot = pot + bet;
 
@@ -523,6 +533,8 @@ public partial class MainWindow : Window
         {
             return;
         }
+
+        GameSounds.Click();
 
         if (street == 0)
         {
@@ -999,6 +1011,7 @@ public partial class MainWindow : Window
 
     private void AnimateDealIn(UIElement card, int index)
     {
+        GameSounds.Deal();
         card.Opacity = 0;
 
         TranslateTransform slide = new TranslateTransform(0, -22);
