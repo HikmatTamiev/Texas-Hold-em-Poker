@@ -113,6 +113,7 @@ public partial class MainWindow : Window
         ShowCards(holeCards, HolePanel);
         opponentHoleCards = TakeCards(2);
         ShowCardBacks(2, OpponentPanel);
+        RefreshDeckPile();
 
         street = 0;
         hasActed = false;
@@ -528,6 +529,7 @@ public partial class MainWindow : Window
             List<Card> flop = TakeCards(3);
             boardCards.AddRange(flop);
             ShowCards(flop, BoardPanel);
+            RefreshDeckPile();
             street = 1;
             BeginStreet("Flop dealt.");
             return;
@@ -538,6 +540,7 @@ public partial class MainWindow : Window
             List<Card> turn = TakeCards(1);
             boardCards.AddRange(turn);
             ShowCards(turn, BoardPanel);
+            RefreshDeckPile();
             street = 2;
             BeginStreet("Turn dealt.");
             return;
@@ -546,6 +549,7 @@ public partial class MainWindow : Window
         List<Card> river = TakeCards(1);
         boardCards.AddRange(river);
         ShowCards(river, BoardPanel);
+        RefreshDeckPile();
         street = 3;
         Showdown();
         UpdateButtons();
@@ -1198,6 +1202,10 @@ public partial class MainWindow : Window
 
     private Border CreateCardBack()
     {
+        Image picture = new Image();
+        picture.Source = LoadCardPicture("card_back.png");
+        picture.Stretch = Stretch.UniformToFill;
+
         Border back = new Border();
         back.Width = 86;
         back.Height = 124;
@@ -1205,18 +1213,56 @@ public partial class MainWindow : Window
         back.CornerRadius = new CornerRadius(8);
         back.Background = new SolidColorBrush(Color.FromRgb(18, 52, 122));
         back.BorderBrush = new SolidColorBrush(Color.FromRgb(243, 211, 138));
-        back.BorderThickness = new Thickness(3);
+        back.BorderThickness = new Thickness(2);
+        back.ClipToBounds = true;
         back.Effect = CardShadow();
-
-        TextBlock monogram = new TextBlock();
-        monogram.Text = "♠";
-        monogram.FontSize = 32;
-        monogram.Foreground = new SolidColorBrush(Color.FromRgb(243, 211, 138));
-        monogram.HorizontalAlignment = HorizontalAlignment.Center;
-        monogram.VerticalAlignment = VerticalAlignment.Center;
-        back.Child = monogram;
+        back.Child = picture;
 
         return back;
+    }
+
+    private int CardsLeftInDeck()
+    {
+        return 52 - holeCards.Count - opponentHoleCards.Count - boardCards.Count;
+    }
+
+    private void RefreshDeckPile()
+    {
+        DeckCanvas.Children.Clear();
+
+        int left = CardsLeftInDeck();
+        if (left < 0)
+        {
+            left = 0;
+        }
+
+        DeckCountText.Text = left.ToString();
+
+        if (left == 0)
+        {
+            return;
+        }
+
+        int layers = left / 4;
+        if (layers < 1)
+        {
+            layers = 1;
+        }
+
+        if (layers > 12)
+        {
+            layers = 12;
+        }
+
+        for (int i = 0; i < layers; i++)
+        {
+            Border card = CreateCardBack();
+            card.Margin = new Thickness(0);
+            card.Effect = null;
+            Canvas.SetLeft(card, i * 1.4);
+            Canvas.SetTop(card, (layers - 1 - i) * 1.4);
+            DeckCanvas.Children.Add(card);
+        }
     }
 
     private DropShadowEffect CardShadow()
