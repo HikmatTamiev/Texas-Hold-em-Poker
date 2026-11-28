@@ -62,8 +62,8 @@
                    Margin="0,0,0,12"/>
 
         <Viewbox Grid.Row="1" Stretch="Uniform">
-            <Grid Width="1180" Height="700">
-                <Ellipse Width="980" Height="700" HorizontalAlignment="Center" Stroke="#6B4A2A" StrokeThickness="16">
+            <Grid Width="1000" Height="700">
+                <Ellipse Stroke="#6B4A2A" StrokeThickness="16">
                     <Ellipse.Fill>
                         <RadialGradientBrush>
                             <GradientStop Color="#24964E" Offset="0"/>
@@ -73,15 +73,21 @@
                     </Ellipse.Fill>
                 </Ellipse>
 
-                <StackPanel HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Margin="0,0,28,20">
-                    <TextBlock Text="DECK" FontSize="12" FontWeight="Bold" Foreground="#F3D38A" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                    <Canvas x:Name="DeckCanvas" Width="110" Height="150"/>
-                    <TextBlock x:Name="DeckCountText" Text="52" FontSize="14" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                </StackPanel>
+                <Border HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="0,0,70,40"
+                        Background="#102E1A"
+                        CornerRadius="14"
+                        Padding="12,10"
+                        Opacity="0.96">
+                    <StackPanel>
+                        <TextBlock Text="DECK" FontSize="12" FontWeight="Bold" Foreground="#F3D38A" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                        <Canvas x:Name="DeckCanvas" Width="96" Height="136" ClipToBounds="True"/>
+                        <TextBlock x:Name="DeckCountText" Text="52" FontSize="14" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
 
-                <StackPanel Width="860" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel Width="760" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,40,0">
                     <Border Background="#1A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center" Opacity="0.94">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
