@@ -7,7 +7,7 @@
         Title="Texas Hold'em" Height="820" Width="1100"
         MinHeight="760" MinWidth="980"
         FontFamily="Segoe UI"
-        Background="#100C09">
+        Background="#0B3D24">
     <Window.Resources>
         <Style x:Key="ActionButton" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
@@ -45,31 +45,38 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Margin="18">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0"
-                   Text="TEXAS HOLD'EM"
-                   FontSize="22"
-                   FontWeight="Bold"
-                   Foreground="#F3D38A"
-                   HorizontalAlignment="Center"
-                   Margin="0,0,0,12"/>
+    <Grid>
+        <Image Source="pack://application:,,,/Images/table_background.jpg"
+               Stretch="UniformToFill"
+               StretchDirection="Both"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
 
-        <Viewbox Grid.Row="1" Stretch="Uniform">
-            <Grid Width="1100" Height="620" ClipToBounds="True">
-                <Image Source="pack://application:,,,/Images/table_background.jpg"
-                       Stretch="UniformToFill"
-                       StretchDirection="Both"/>
+        <Grid Margin="18">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
+            <TextBlock Grid.Row="0"
+                       Text="TEXAS HOLD'EM"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       Foreground="#F3D38A"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,12">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.7" Color="Black"/>
+                </TextBlock.Effect>
+            </TextBlock>
+
+            <Grid Grid.Row="1">
                 <Border HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Margin="0,0,36,20"
+                        Margin="0,0,20,20"
                         Background="#CC102E1A"
                         CornerRadius="14"
                         Padding="12,10">
@@ -80,7 +87,7 @@
                     </StackPanel>
                 </Border>
 
-                <StackPanel Width="720" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="160,0,20,0">
+                <StackPanel Width="720" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="140,0,40,0">
                     <Border Background="#B31A120C" CornerRadius="16" Padding="16,10" HorizontalAlignment="Center">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -121,85 +128,89 @@
                     </Border>
                 </StackPanel>
             </Grid>
-        </Viewbox>
 
-        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,16,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="FoldButton" Content="Fold" Style="{StaticResource ActionButton}" Background="#8C2F2F" Click="Fold_Click"/>
-                <Button x:Name="CheckButton" Content="Check" Style="{StaticResource ActionButton}" Background="#2C6B5A" Click="Check_Click"/>
-                <Button x:Name="CallButton" Content="Call" Style="{StaticResource ActionButton}" Background="#1E7A45" Click="Call_Click"/>
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <Button x:Name="RaiseButton" Content="Raise 20" Style="{StaticResource ActionButton}" Background="#C47B12" Margin="0" Click="Raise_Click"/>
-                    <Button x:Name="RaiseMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#9A5F0E" Padding="10,10" Margin="3,0,0,0" Click="RaiseMenu_Click"/>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,12,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="FoldButton" Content="Fold" Style="{StaticResource ActionButton}" Background="#8C2F2F" Click="Fold_Click"/>
+                    <Button x:Name="CheckButton" Content="Check" Style="{StaticResource ActionButton}" Background="#2C6B5A" Click="Check_Click"/>
+                    <Button x:Name="CallButton" Content="Call" Style="{StaticResource ActionButton}" Background="#1E7A45" Click="Call_Click"/>
+                    <StackPanel Orientation="Horizontal" Margin="5,0">
+                        <Button x:Name="RaiseButton" Content="Raise 20" Style="{StaticResource ActionButton}" Background="#C47B12" Margin="0" Click="Raise_Click"/>
+                        <Button x:Name="RaiseMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#9A5F0E" Padding="10,10" Margin="3,0,0,0" Click="RaiseMenu_Click"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5,0">
+                        <Button x:Name="BetButton" Content="Bet 20" Style="{StaticResource ActionButton}" Background="#A67C2D" Margin="0" Click="Bet_Click"/>
+                        <Button x:Name="BetMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#7E5C1F" Padding="10,10" Margin="3,0,0,0" Click="BetMenu_Click"/>
+                    </StackPanel>
+                    <Button x:Name="AllInButton" Content="All in" Style="{StaticResource ActionButton}" Background="#7A1F3D" Click="AllIn_Click"/>
+                    <Button x:Name="DealNextButton" Content="Deal next" Style="{StaticResource ActionButton}" Background="#1E4F86" Click="DealNext_Click"/>
+                    <Button x:Name="NewHandButton" Content="New hand" Style="{StaticResource ActionButton}" Background="#3E4550" Click="NewHand_Click"/>
+                    <Button x:Name="ResetStacksButton" Content="Reset stacks" Style="{StaticResource ActionButton}" Background="#4A3B32" Click="ResetStacks_Click"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <Button x:Name="BetButton" Content="Bet 20" Style="{StaticResource ActionButton}" Background="#A67C2D" Margin="0" Click="Bet_Click"/>
-                    <Button x:Name="BetMenuButton" Content="▾" Style="{StaticResource ActionButton}" Background="#7E5C1F" Padding="10,10" Margin="3,0,0,0" Click="BetMenu_Click"/>
-                </StackPanel>
-                <Button x:Name="AllInButton" Content="All in" Style="{StaticResource ActionButton}" Background="#7A1F3D" Click="AllIn_Click"/>
-                <Button x:Name="DealNextButton" Content="Deal next" Style="{StaticResource ActionButton}" Background="#1E4F86" Click="DealNext_Click"/>
-                <Button x:Name="NewHandButton" Content="New hand" Style="{StaticResource ActionButton}" Background="#3E4550" Click="NewHand_Click"/>
-                <Button x:Name="ResetStacksButton" Content="Reset stacks" Style="{StaticResource ActionButton}" Background="#4A3B32" Click="ResetStacks_Click"/>
+
+                <Border x:Name="RaiseSliderPanel"
+                        Visibility="Collapsed"
+                        Background="#1A120C"
+                        CornerRadius="16"
+                        Padding="18,12"
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Custom raise" Foreground="#C8B48A" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                        <TextBlock x:Name="RaiseAmountText" Text="+20" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Width="64"/>
+                        <Slider x:Name="RaiseSlider"
+                                Width="220"
+                                Minimum="20"
+                                Maximum="100"
+                                Value="20"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                VerticalAlignment="Center"
+                                Margin="8,0"
+                                ValueChanged="RaiseSlider_ValueChanged"/>
+                        <Button Content="Confirm" Style="{StaticResource ActionButton}" Background="#C47B12" Click="ConfirmCustomRaise_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="BetSliderPanel"
+                        Visibility="Collapsed"
+                        Background="#1A120C"
+                        CornerRadius="16"
+                        Padding="18,12"
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Custom bet" Foreground="#C8B48A" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                        <TextBlock x:Name="BetAmountText" Text="20" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Width="64"/>
+                        <Slider x:Name="BetSlider"
+                                Width="220"
+                                Minimum="20"
+                                Maximum="100"
+                                Value="20"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                VerticalAlignment="Center"
+                                Margin="8,0"
+                                ValueChanged="BetSlider_ValueChanged"/>
+                        <Button Content="Confirm" Style="{StaticResource ActionButton}" Background="#A67C2D" Click="ConfirmCustomBet_Click"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
 
-            <Border x:Name="RaiseSliderPanel"
-                    Visibility="Collapsed"
-                    Background="#1A120C"
-                    CornerRadius="16"
-                    Padding="18,12"
-                    Margin="0,12,0,0"
-                    HorizontalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Custom raise" Foreground="#C8B48A" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                    <TextBlock x:Name="RaiseAmountText" Text="+20" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Width="64"/>
-                    <Slider x:Name="RaiseSlider"
-                            Width="220"
-                            Minimum="20"
-                            Maximum="100"
-                            Value="20"
-                            TickFrequency="1"
-                            IsSnapToTickEnabled="True"
-                            VerticalAlignment="Center"
-                            Margin="8,0"
-                            ValueChanged="RaiseSlider_ValueChanged"/>
-                    <Button Content="Confirm" Style="{StaticResource ActionButton}" Background="#C47B12" Click="ConfirmCustomRaise_Click"/>
-                </StackPanel>
-            </Border>
-
-            <Border x:Name="BetSliderPanel"
-                    Visibility="Collapsed"
-                    Background="#1A120C"
-                    CornerRadius="16"
-                    Padding="18,12"
-                    Margin="0,12,0,0"
-                    HorizontalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Custom bet" Foreground="#C8B48A" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
-                    <TextBlock x:Name="BetAmountText" Text="20" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Width="64"/>
-                    <Slider x:Name="BetSlider"
-                            Width="220"
-                            Minimum="20"
-                            Maximum="100"
-                            Value="20"
-                            TickFrequency="1"
-                            IsSnapToTickEnabled="True"
-                            VerticalAlignment="Center"
-                            Margin="8,0"
-                            ValueChanged="BetSlider_ValueChanged"/>
-                    <Button Content="Confirm" Style="{StaticResource ActionButton}" Background="#A67C2D" Click="ConfirmCustomBet_Click"/>
-                </StackPanel>
-            </Border>
-        </StackPanel>
-
-        <TextBlock x:Name="HandNameText"
-                   Grid.Row="3"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="White"
-                   TextAlignment="Center"
-                   TextWrapping="Wrap"
-                   MaxWidth="980"
-                   HorizontalAlignment="Center"
-                   Margin="0,14,0,0"/>
+            <TextBlock x:Name="HandNameText"
+                       Grid.Row="3"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="White"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       MaxWidth="980"
+                       HorizontalAlignment="Center"
+                       Margin="0,14,0,0">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.75" Color="Black"/>
+                </TextBlock.Effect>
+            </TextBlock>
+        </Grid>
     </Grid>
 </Window>
