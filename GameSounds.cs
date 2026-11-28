@@ -5,6 +5,8 @@ namespace TexasHoldem;
 
 public static class GameSounds
 {
+    private static readonly Random random = new Random();
+
     public static void Click()
     {
         Play("click.wav");
@@ -12,12 +14,26 @@ public static class GameSounds
 
     public static void Deal()
     {
-        Play("deal.wav");
+        if (random.Next(2) == 0)
+        {
+            Play("deal.wav");
+        }
+        else
+        {
+            Play("deal2.wav");
+        }
     }
 
     public static void Chips()
     {
-        Play("chips.wav");
+        if (random.Next(2) == 0)
+        {
+            Play("chips.wav");
+        }
+        else
+        {
+            Play("chips2.wav");
+        }
     }
 
     public static void Fold()
