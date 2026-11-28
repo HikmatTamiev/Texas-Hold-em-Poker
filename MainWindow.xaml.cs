@@ -1018,26 +1018,51 @@ public partial class MainWindow : Window
 
     private void AnimateFlipReveal(Border shell, Card card, int delayMs)
     {
+        shell.Effect = null;
         shell.RenderTransformOrigin = new Point(0.5, 0.5);
         ScaleTransform scale = new ScaleTransform(1, 1);
         shell.RenderTransform = scale;
 
-        DoubleAnimation close = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(160)));
+        DoubleAnimation close = new DoubleAnimation(1, 0.02, new Duration(TimeSpan.FromMilliseconds(160)));
         close.BeginTime = TimeSpan.FromMilliseconds(delayMs);
         close.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn };
+        close.FillBehavior = FillBehavior.Stop;
 
         close.Completed += (_, _) =>
         {
-            Border face = CreateCardFace(card);
-            shell.Background = face.Background;
-            shell.BorderBrush = face.BorderBrush;
-            shell.BorderThickness = face.BorderThickness;
-            shell.CornerRadius = face.CornerRadius;
-            shell.Child = face.Child;
-            shell.Effect = face.Effect;
+            if (shell.Parent == null)
+            {
+                return;
+            }
 
-            DoubleAnimation open = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(180)));
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+            scale.ScaleX = 0.02;
+
+            Image picture = new Image();
+            picture.Source = LoadCardPicture(CardFileName(card));
+            picture.Stretch = Stretch.Uniform;
+
+            shell.Background = new SolidColorBrush(Color.FromRgb(255, 252, 245));
+            shell.BorderBrush = new SolidColorBrush(Color.FromRgb(210, 198, 176));
+            shell.BorderThickness = new Thickness(1);
+            shell.CornerRadius = new CornerRadius(6);
+            shell.Child = picture;
+
+            DoubleAnimation open = new DoubleAnimation(0.02, 1, new Duration(TimeSpan.FromMilliseconds(180)));
             open.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+            open.FillBehavior = FillBehavior.Stop;
+            open.Completed += (_, _) =>
+            {
+                if (shell.Parent == null)
+                {
+                    return;
+                }
+
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+                scale.ScaleX = 1;
+                shell.Effect = CardShadow();
+            };
+
             scale.BeginAnimation(ScaleTransform.ScaleXProperty, open);
         };
 
